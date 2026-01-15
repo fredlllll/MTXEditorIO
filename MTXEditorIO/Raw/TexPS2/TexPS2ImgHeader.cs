@@ -13,8 +13,8 @@ namespace MTXEditorIO.Raw.TexPS2
 
     public enum PaletteFormat : uint
     {
-        _4bytes = 0,
-        _2bytes = 2,
+        RGBA8888 = 0,
+        ABGR1555 = 2,
     }
 
     public interface ITexPS2ImgHeader
@@ -22,6 +22,8 @@ namespace MTXEditorIO.Raw.TexPS2
         uint Checksum { get; }
         uint WidthPowOfTwo { get; }
         uint HeightPowOfTwo { get; }
+        uint Width => (uint)(1 << (int)WidthPowOfTwo);
+        uint Height => (uint)(1 << (int)HeightPowOfTwo);
         TextureFormat Format { get; }
         PaletteFormat PaletteFormat { get; }
     }

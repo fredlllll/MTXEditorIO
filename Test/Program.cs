@@ -68,6 +68,8 @@ namespace Test
                         case 'A':
                             a = fieldValue;
                             break;
+                        case 'X':
+                            break; //skip
                     }
                 }
                 result[i] = (r, g, b, a);
@@ -83,10 +85,41 @@ namespace Test
             for (int i = 0; i < palette.Length; ++i)
             {
                 uint paletteEntry = palette[i];
-                byte r = (byte)((paletteEntry >> 24) & 0xFF);
-                byte g = (byte)((paletteEntry >> 16) & 0xFF);
+                byte a = (byte)((paletteEntry >> 24) & 0xFF);
+                byte r = (byte)((paletteEntry >> 16) & 0xFF);
                 byte b = (byte)((paletteEntry >> 8) & 0xFF);
-                byte a = (byte)(paletteEntry & 0xFF);
+                byte g = (byte)(paletteEntry & 0xFF);
+                result[i] = (r, g, b, a);
+            }
+            return result;
+        }
+
+        public static (byte r, byte g, byte b, byte a)[] ParsePaletteABGR1555(byte[] palette)
+        {
+            (byte r, byte g, byte b, byte a)[] result = new (byte r, byte g, byte b, byte a)[palette.Length /2];
+            for (int i = 0; i < result.Length; ++i)
+            {
+                int paletteIndex = i * 2;
+                ushort entry = (ushort)(palette[paletteIndex] | (palette[paletteIndex + 1] << 8));
+                byte a = ExtractField(entry, 0, 1);
+                byte b = ExtractField(entry, 1, 5);
+                byte g = ExtractField(entry, 6, 5);
+                byte r = ExtractField(entry, 11, 5);
+                result[i] = (r, g, b, a);
+            }
+            return result;
+        }
+
+        public static (byte r, byte g, byte b, byte a)[] ParsePaletteRGBA8888(byte[] palette)
+        {
+            (byte r, byte g, byte b, byte a)[] result = new (byte r, byte g, byte b, byte a)[palette.Length / 4];
+            for (int i = 0; i < result.Length; ++i)
+            {
+                int paletteIndex = i * 4;
+                byte r = palette[paletteIndex];
+                byte g = palette[paletteIndex + 1];
+                byte b = palette[paletteIndex + 2];
+                byte a = palette[paletteIndex + 3];
                 result[i] = (r, g, b, a);
             }
             return result;
@@ -94,41 +127,19 @@ namespace Test
 
         public static (byte r, byte g, byte b, byte a)[] ParsePalette(byte[] palette, PaletteFormat format)
         {
-            bool littleEndian = true;
-
-
             switch (format)
             {
-                case PaletteFormat._2bytes:
-                    ushort[] palette2Bytes = new ushort[palette.Length / 2];
+                case PaletteFormat.ABGR1555:
+                    /*ushort[] palette2Bytes = new ushort[palette.Length / 2];
                     for (int i = 0; i < palette2Bytes.Length; i++)
                     {
                         int offset = i * 2;
-                        if (littleEndian)
-                        {
-                            palette2Bytes[i] = (ushort)(palette[offset] | (palette[offset + 1] << 8));
-                        }
-                        else
-                        {
-                            palette2Bytes[i] = (ushort)(palette[offset + 1] | (palette[offset] << 8));
-                        }
+                        palette2Bytes[i] = (ushort)(palette[offset] | (palette[offset + 1] << 8));
                     }
-                    return ParsePalette(palette2Bytes, "abgr1555");
-                case PaletteFormat._4bytes:
-                    uint[] palette4Bytes = new uint[palette.Length / 4];
-                    for (int i = 0; i < palette4Bytes.Length; i++)
-                    {
-                        int offset = i * 2;
-                        if (littleEndian)
-                        {
-                            palette4Bytes[i] = (uint)(palette[offset] | (palette[offset + 1] << 8) | (palette[offset + 2] << 16) | (palette[offset + 3] << 24));
-                        }
-                        else
-                        {
-                            palette4Bytes[i] = (uint)(palette[offset + 3] | (palette[offset + 2] << 8) | (palette[offset + 1] << 16) | (palette[offset] << 24));
-                        }
-                    }
-                    return ParsePalette(palette4Bytes, "argb8888");
+                    return ParsePalette(palette2Bytes, "abgr1555");*/
+                    return ParsePaletteABGR1555(palette);
+                case PaletteFormat.RGBA8888:
+                    return ParsePaletteRGBA8888(palette);
                 default:
                     throw new Exception($"Unsupported palette format: {format}");
             }
@@ -148,6 +159,23 @@ namespace Test
             return result;
         }
 
+        public static (byte r, byte g, byte b, byte a)[] GetImageColors(TexPS2Img image)
+        {
+            var palette = ParsePalette(image.palette, image.header.PaletteFormat);
+            byte[] indices = image.imageData;
+            if (image.header.Format == TextureFormat.Indexed4)
+            {
+                indices = _4To8BitIndices(image.imageData);
+            }
+
+            (byte r, byte g, byte b, byte a)[] outputColors = new (byte r, byte g, byte b, byte a)[indices.Length];
+            for (int j = 0; j < indices.Length; ++j)
+            {
+                outputColors[j] = palette[indices[j]];
+            }
+            return outputColors;
+        }
+
 
         static void Main(string[] args)
         {
@@ -165,19 +193,9 @@ namespace Test
             for (int i = 0; i < tex.images.Length; ++i)
             {
                 var img = tex.images[i];
-                var palette = ParsePalette(img.palette, img.header.PaletteFormat);
-                byte[] indices = img.imageData;
-                if (img.header.Format == TextureFormat.Indexed4)
-                {
-                    indices = _4To8BitIndices(img.imageData);
-                }
-                (byte r, byte g, byte b, byte a)[] outputColors = new (byte r, byte g, byte b, byte a)[indices.Length];
-                for (int j = 0; j < indices.Length; ++j)
-                {
-                    byte index = indices[j];
-                    outputColors[j] = palette[index];
-                }
-                var outFile = $"{fileNameNoExt}_{i}_{1 << (int)img.header.WidthPowOfTwo}x{1 << (int)img.header.HeightPowOfTwo}.png";
+                var outputColors = GetImageColors(img);
+
+                var outFile = $"{fileNameNoExt}_{i}_{img.header.Width}x{img.header.Height}.data";
                 using var outFs = new FileStream(outFile, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
                 foreach (var col in outputColors)
                 {

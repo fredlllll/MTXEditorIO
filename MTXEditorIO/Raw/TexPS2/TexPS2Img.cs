@@ -55,10 +55,10 @@ namespace MTXEditorIO.Raw.TexPS2
             }
             switch (header.PaletteFormat)
             {
-                case PaletteFormat._2bytes:
+                case PaletteFormat.ABGR1555:
                     paletteItemSize = 2;
                     break;
-                case PaletteFormat._4bytes:
+                case PaletteFormat.RGBA8888:
                     paletteItemSize = 4;
                     break;
                 default:
