@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ps2TexToPng", "Ps2TexToPng\Ps2TexToPng.csproj", "{8A5E9E61-CBCB-43C4-83A5-3017D6D19BEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToTex", "ToTex\ToTex.csproj", "{AF87B7AE-0523-4F70-B983-7AB1254D5DCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexToPng", "TexToPng\TexToPng.csproj", "{49014059-824E-4A07-ABC9-24E730EC4C3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{8A5E9E61-CBCB-43C4-83A5-3017D6D19BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A5E9E61-CBCB-43C4-83A5-3017D6D19BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A5E9E61-CBCB-43C4-83A5-3017D6D19BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF87B7AE-0523-4F70-B983-7AB1254D5DCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF87B7AE-0523-4F70-B983-7AB1254D5DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF87B7AE-0523-4F70-B983-7AB1254D5DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF87B7AE-0523-4F70-B983-7AB1254D5DCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49014059-824E-4A07-ABC9-24E730EC4C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49014059-824E-4A07-ABC9-24E730EC4C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49014059-824E-4A07-ABC9-24E730EC4C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49014059-824E-4A07-ABC9-24E730EC4C3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

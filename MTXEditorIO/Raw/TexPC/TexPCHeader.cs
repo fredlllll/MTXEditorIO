@@ -8,7 +8,13 @@ namespace MTXEditorIO.Raw.TexPC
     [StructLayout(LayoutKind.Sequential)]
     public struct TexPCHeader
     {
+        /// <summary>
+        /// supposed to be 1
+        /// </summary>
         public uint id;
-        public uint imageNum;
+        /// <summary>
+        /// number of images in this tex file
+        /// </summary>
+        public uint imageNum; 
     }
 }

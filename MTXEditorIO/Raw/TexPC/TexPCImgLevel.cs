@@ -8,12 +8,21 @@ namespace MTXEditorIO.Raw.TexPC
     public class TexPCImgLevel
     {
         public uint size;
-        public byte[]? data;
+        public byte[] data = Array.Empty<byte>();
 
         public void ReadFrom(StructReader reader)
         {
             size = reader.ReadUInt32();
             data = reader.ReadBytes((int)size);
-        }   
+        }
+
+        public void WriteTo(StructWriter writer)
+        {
+            writer.Write(size);
+            if (data != null)
+            {
+                writer.Write(data);
+            }
+        }
     }
 }

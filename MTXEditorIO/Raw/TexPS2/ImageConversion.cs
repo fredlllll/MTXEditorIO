@@ -105,5 +105,59 @@ namespace MTXEditorIO.Raw.TexPS2
             shifted &= mask;
             return ExpandTo8((byte)shifted, fieldSize);
         }
+
+        /// <summary>
+        /// converts a palette of 2 byte values to rgba colors based on the provided pixel format, e.g. "ARGB1555"
+        /// also supports skipping bits with an X for the channel name. E.g. "XRGB1555" will skip the first bit and not write to the alpha channel at all
+        /// </summary>
+        /// <param name="palette"></param>
+        /// <param name="pixelFormat"></param>
+        /// <returns></returns>
+        public static (byte r, byte g, byte b, byte a)[] ParsePalette(ushort[] palette, string pixelFormat)
+        {
+            string channelOrder = pixelFormat.Substring(0, pixelFormat.Length / 2).ToUpper();
+            string channelSizes = pixelFormat.Substring(pixelFormat.Length / 2);
+
+            (byte r, byte g, byte b, byte a)[] result = new (byte r, byte g, byte b, byte a)[palette.Length];
+            for (int i = 0; i < palette.Length; ++i)
+            {
+                var paletteEntry = palette[i];
+
+                int bitOffset = 0;
+                byte r = 0, g = 0, b = 0, a = 255;
+                for (int channelIndex = 0; channelIndex < channelOrder.Length; ++channelIndex)
+                {
+                    int channelSize = int.Parse(channelSizes[channelIndex].ToString());
+                    if (channelSize == 0)
+                    {
+                        continue;
+                    }
+                    byte fieldValue = ExtractField(paletteEntry, bitOffset, channelSize);
+                    bitOffset += channelSize;
+
+                    char color = channelOrder[channelIndex];
+                    switch (color)
+                    {
+                        case 'R':
+                            r = fieldValue;
+                            break;
+                        case 'G':
+                            g = fieldValue;
+                            break;
+                        case 'B':
+                            b = fieldValue;
+                            break;
+                        case 'A':
+                            a = fieldValue;
+                            break;
+                        case 'X':
+                            break; //discard this part
+                    }
+                }
+                result[i] = (r, g, b, a);
+            }
+
+            return result;
+        }
     }
 }
