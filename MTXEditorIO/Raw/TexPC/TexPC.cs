@@ -11,6 +11,11 @@ namespace MTXEditorIO.Raw.TexPC
         public TexPCHeader header;
         public TexPCImg[] images = Array.Empty<TexPCImg>();
 
+        public TexPC()
+        {
+            header.id = 1;
+        }
+
         public void ReadFrom(Stream stream)
         {
             using var reader = new StructReader(stream, Encoding.ASCII, true);
@@ -27,6 +32,7 @@ namespace MTXEditorIO.Raw.TexPC
         public void WriteTo(Stream stream)
         {
             using var writer = new StructWriter(stream, Encoding.ASCII, true);
+            header.imageNum = (uint)images.Length;
             writer.WriteStruct(header);
             for (int i = 0; i < header.imageNum; i++)
             {

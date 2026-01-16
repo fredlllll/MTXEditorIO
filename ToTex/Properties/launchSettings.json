@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ToTex": {
+      "commandName": "Project",
+      "commandLineArgs": "\"I:\\Projects\\MTX Mototrax PRO Modding\\texture that doesnt work\\travisZtex_dir\\9_0_128x128.png\" --output textZtex"
+    }
+  }
+}

@@ -23,6 +23,7 @@ namespace TexToPng
 
             using var fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
+            BcDecoder decoder = new BcDecoder();
             TexPC tex = new TexPC();
             tex.ReadFrom(fs);
             Console.WriteLine($"Done reading, trailing bytes: {fs.Length - fs.Position}");
@@ -35,12 +36,8 @@ namespace TexToPng
                 for (int i = 0; i < img.header.levels; ++i)
                 {
                     var layer = img.levels[i];
-
-                    var outData = layer.data;
-
-                    BcDecoder decoder = new BcDecoder();
+                    
                     ColorRgba32[] colors;
-
                     switch (img.header.dxt)
                     {
                         case 1:
@@ -53,7 +50,7 @@ namespace TexToPng
                             throw new Exception($"Unsupported DXT format: {img.header.dxt}");
                     }
 
-                    Image<Rgba32> image = new Image<Rgba32>((int)width, (int)height);
+                    using Image<Rgba32> image = new Image<Rgba32>((int)width, (int)height);
                     image.ProcessPixelRows(accessor =>
                     {
                         for (int y = 0; y < accessor.Height; y++)
