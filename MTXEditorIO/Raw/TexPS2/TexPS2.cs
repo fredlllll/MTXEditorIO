@@ -19,6 +19,7 @@ namespace MTXEditorIO.Raw.TexPS2
             images = new TexPS2Img[header.imageNum];
             for (int i = 0; i < header.imageNum; i++)
             {
+                //Console.WriteLine($"Reading Image {i}");
                 var img = images[i] = new TexPS2Img(i == 0);
                 img.ReadFrom(reader);
             }

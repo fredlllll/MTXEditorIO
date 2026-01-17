@@ -26,6 +26,7 @@ namespace MTXEditorIO.Raw.TexPS2
         uint Height => (uint)(1 << (int)HeightPowOfTwo);
         TextureFormat Format { get; }
         PaletteFormat PaletteFormat { get; }
+        uint MipMapLevels { get; }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -36,19 +37,20 @@ namespace MTXEditorIO.Raw.TexPS2
         public uint heightPowOfTwo;
         public TextureFormat format;
         public PaletteFormat paletteFormat;
+        public uint mipMapLevels;
+        public uint unknown1;
         public uint unknown2;
-        public uint unknown3;
-        public uint unknown4;
 
         public uint Checksum => checksum;
         public uint WidthPowOfTwo => widthPowOfTwo;
         public uint HeightPowOfTwo => heightPowOfTwo;
         public TextureFormat Format => format;
         public PaletteFormat PaletteFormat => paletteFormat;
+        public uint MipMapLevels => mipMapLevels;
 
         public override string ToString()
         {
-            return $"checksum: {checksum}, widthPowOfTwo: {widthPowOfTwo}, heightPowOfTwo: {heightPowOfTwo}, format: {format}, paletteFormat: {paletteFormat}, unknown2: {unknown2}, unknown3: {unknown3}, unknown4: {unknown4}";
+            return $"checksum: {checksum}, widthPowOfTwo: {widthPowOfTwo}, heightPowOfTwo: {heightPowOfTwo}, format: {format}, paletteFormat: {paletteFormat}, mipMapLevels: {mipMapLevels}, unknown1: {unknown1}, unknown2: {unknown2}";
         }
     }
 
@@ -61,18 +63,19 @@ namespace MTXEditorIO.Raw.TexPS2
         public uint heightPowOfTwo;
         public TextureFormat format;
         public PaletteFormat paletteFormat;
-        public uint unknown3;
-        public uint unknown4;
+        public uint mipMapLevels;
+        public uint unknown2;
 
         public uint Checksum => checksum;
         public uint WidthPowOfTwo => widthPowOfTwo;
         public uint HeightPowOfTwo => heightPowOfTwo;
         public TextureFormat Format => format;
         public PaletteFormat PaletteFormat => paletteFormat;
+        public uint MipMapLevels => mipMapLevels;
 
         public override string ToString()
         {
-            return $"checksum: {checksum}, widthPowOfTwo: {widthPowOfTwo}, heightPowOfTwo: {heightPowOfTwo}, format: {format}, paletteFormat: {paletteFormat}, unknown1: {unknown1}, unknown3: {unknown3}, unknown4: {unknown4}";
+            return $"checksum: {checksum}, widthPowOfTwo: {widthPowOfTwo}, heightPowOfTwo: {heightPowOfTwo}, format: {format}, paletteFormat: {paletteFormat}, mipMapLevels: {mipMapLevels}, unknown1: {unknown1}, unknown2: {unknown2}";
         }
     }
 }

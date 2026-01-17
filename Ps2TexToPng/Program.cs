@@ -1,5 +1,6 @@
-﻿using ImageMagick;
-using MTXEditorIO.Raw.TexPS2;
+﻿using MTXEditorIO.Raw.TexPS2;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Ps2TexToPng
 {
@@ -38,24 +39,22 @@ namespace Ps2TexToPng
 
                 var imageColors = ImageConversion.GetImageColors(img);
 
-                var image = new MagickImage(MagickColors.Green, width, height);
-                image.ColorType = ColorType.TrueColor;
-                image.SetBitDepth(32);
-                image.Format = MagickFormat.Png32;
 
-                var pixels = image.GetPixelsUnsafe();
-
-                for (int y = 0; y < height; y++)
+                using Image<Rgba32> image = new Image<Rgba32>((int)width, (int)height);
+                image.ProcessPixelRows(accessor =>
                 {
-                    for (int x = 0; x < width; x++)
+                    for (int y = 0; y < accessor.Height; y++)
                     {
-                        var color = imageColors[y * width + x];
-                        pixels.SetPixel(x, y, new byte[] { color.r, color.g, color.b, color.a });
+                        Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                        for (int x = 0; x < pixelRow.Length; x++)
+                        {
+                            var color = imageColors[y * (int)width + x];
+                            pixelRow[x] = new Rgba32(color.r, color.g, color.b, color.a);
+                        }
                     }
-                }
-
-                var outFile = $"{fileNameNoExt}_{i}.png";
-                image.Write(outFile);
+                });
+                string outFile = $"{fileNameNoExt}_{i}.png";
+                image.SaveAsPng(outFile);
             }
         }
     }
