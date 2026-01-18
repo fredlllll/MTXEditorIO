@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.TexPS2
 {
-    public class TexPS2Img
+    public class TexPS2Img : IReadableWriteable
     {
         public readonly bool isFirstImage;
 
@@ -60,23 +60,29 @@ namespace MTXEditorIO.Raw.TexPS2
             int dataSize = 0;
             switch (header.Format)
             {
-                case TextureFormat.Indexed4:
+                case PixelFormat.Indexed4:
                     paletteItemCount = 16; // 16 colors
                     dataSize = width * height / 2; // 4 bits per pixel
                     break;
-                case TextureFormat.Indexed8:
+                case PixelFormat.Indexed8:
                     paletteItemCount = 256; // 256 colors
                     dataSize = width * height; // 8 bits per pixel
+                    break;
+                case PixelFormat.ABGR1555:
+                    dataSize = width * height * 2; //16 bit per pixel
+                    break;
+                case PixelFormat.RGBA8888:
+                    dataSize = width * height * 4; //32 bits per pixel
                     break;
                 default:
                     throw new Exception($"Unsupported texture format: {header.Format}, header at {headerPos}");
             }
             switch (header.PaletteFormat)
             {
-                case PaletteFormat.ABGR1555:
+                case PixelFormat.ABGR1555:
                     paletteItemSize = 2;
                     break;
-                case PaletteFormat.RGBA8888:
+                case PixelFormat.RGBA8888:
                     paletteItemSize = 4;
                     break;
                 default:
@@ -90,6 +96,11 @@ namespace MTXEditorIO.Raw.TexPS2
                 dataSize /= 4;
                 mipMaps[i] = reader.ReadBytes(dataSize);
             }
+        }
+
+        public void WriteTo(StructWriter writer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

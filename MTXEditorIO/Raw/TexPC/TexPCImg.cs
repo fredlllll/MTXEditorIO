@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.TexPC
 {
-    public class TexPCImg
+    public class TexPCImg : IReadableWriteable
     {
         public TexPCImgHeader header;
         public TexPCImgLevel[] levels = Array.Empty<TexPCImgLevel>();

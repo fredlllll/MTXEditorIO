@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.TexPS2
 {
-    public class TexPS2
+    public class TexPS2 : IReadableWriteableFromStream
     {
         public TexPS2Header header;
         public TexPS2Img[] images = Array.Empty<TexPS2Img>();
@@ -23,6 +23,11 @@ namespace MTXEditorIO.Raw.TexPS2
                 var img = images[i] = new TexPS2Img(i == 0);
                 img.ReadFrom(reader);
             }
+        }
+
+        public void WriteTo(Stream stream)
+        {
+            throw new NotImplementedException();
         }
     }
 }

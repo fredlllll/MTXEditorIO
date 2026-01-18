@@ -8,19 +8,32 @@ namespace MTXEditorIO.Raw.TexPS2
     {
         public static (byte r, byte g, byte b, byte a)[] GetImageColors(TexPS2Img image)
         {
-            var palette = ParsePalette(image.palette, image.header.PaletteFormat);
-            byte[] indices = image.imageData;
-            if (image.header.Format == TextureFormat.Indexed4)
+            (byte r, byte g, byte b, byte a)[] outputColors;
+            if (IsIndexedPixelFormat(image.header.Format))
             {
-                indices = _4To8BitIndices(image.imageData);
-            }
+                var palette = ParsePalette(image.palette, image.header.PaletteFormat);
+                byte[] indices = image.imageData;
+                if (image.header.Format == PixelFormat.Indexed4)
+                {
+                    indices = _4To8BitIndices(image.imageData);
+                }
 
-            (byte r, byte g, byte b, byte a)[] outputColors = new (byte r, byte g, byte b, byte a)[indices.Length];
-            for (int j = 0; j < indices.Length; ++j)
+                outputColors = new (byte r, byte g, byte b, byte a)[indices.Length];
+                for (int j = 0; j < indices.Length; ++j)
+                {
+                    outputColors[j] = palette[indices[j]];
+                }
+            }
+            else
             {
-                outputColors[j] = palette[indices[j]];
+                outputColors = ParsePalette(image.imageData, image.header.Format);
             }
             return outputColors;
+        }
+
+        public static bool IsIndexedPixelFormat(PixelFormat format)
+        {
+            return format == PixelFormat.Indexed4 || format == PixelFormat.Indexed8;
         }
 
         public static (byte r, byte g, byte b, byte a)[] ParsePaletteABGR1555(byte[] palette)
@@ -54,13 +67,13 @@ namespace MTXEditorIO.Raw.TexPS2
             return result;
         }
 
-        public static (byte r, byte g, byte b, byte a)[] ParsePalette(byte[] palette, PaletteFormat format)
+        public static (byte r, byte g, byte b, byte a)[] ParsePalette(byte[] palette, PixelFormat format)
         {
             switch (format)
             {
-                case PaletteFormat.ABGR1555:
+                case PixelFormat.ABGR1555:
                     return ParsePaletteABGR1555(palette);
-                case PaletteFormat.RGBA8888:
+                case PixelFormat.RGBA8888:
                     return ParsePaletteRGBA8888(palette);
                 default:
                     throw new Exception($"Unsupported palette format: {format}");

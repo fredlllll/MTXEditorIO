@@ -5,28 +5,24 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.TexPS2
 {
-    public enum TextureFormat : uint
+    public enum PixelFormat : uint
     {
+        RGBA8888 = 0,
+        ABGR1555 = 2,
         Indexed8 = 19,
         Indexed4 = 20,
     }
 
-    public enum PaletteFormat : uint
-    {
-        RGBA8888 = 0,
-        ABGR1555 = 2,
-    }
-
     public interface ITexPS2ImgHeader
     {
-        uint Checksum { get; }
-        uint WidthPowOfTwo { get; }
-        uint HeightPowOfTwo { get; }
+        uint Checksum { get; set; }
+        uint WidthPowOfTwo { get; set; }
+        uint HeightPowOfTwo { get; set; }
         uint Width => (uint)(1 << (int)WidthPowOfTwo);
         uint Height => (uint)(1 << (int)HeightPowOfTwo);
-        TextureFormat Format { get; }
-        PaletteFormat PaletteFormat { get; }
-        uint MipMapLevels { get; }
+        PixelFormat Format { get; set; }
+        PixelFormat PaletteFormat { get; set; }
+        uint MipMapLevels { get; set; }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -35,18 +31,18 @@ namespace MTXEditorIO.Raw.TexPS2
         public uint checksum;
         public uint widthPowOfTwo;
         public uint heightPowOfTwo;
-        public TextureFormat format;
-        public PaletteFormat paletteFormat;
+        public PixelFormat format;
+        public PixelFormat paletteFormat;
         public uint mipMapLevels;
         public uint unknown1;
         public uint unknown2;
 
-        public uint Checksum => checksum;
-        public uint WidthPowOfTwo => widthPowOfTwo;
-        public uint HeightPowOfTwo => heightPowOfTwo;
-        public TextureFormat Format => format;
-        public PaletteFormat PaletteFormat => paletteFormat;
-        public uint MipMapLevels => mipMapLevels;
+        public uint Checksum { get { return checksum; } set { checksum = value; } }
+        public uint WidthPowOfTwo { get { return widthPowOfTwo; } set { widthPowOfTwo = value; } }
+        public uint HeightPowOfTwo { get { return heightPowOfTwo; } set { heightPowOfTwo = value; } }
+        public PixelFormat Format { get { return format; } set { format = value; } }
+        public PixelFormat PaletteFormat { get { return paletteFormat; } set { paletteFormat = value; } }
+        public uint MipMapLevels { get { return mipMapLevels; } set { mipMapLevels = value; } }
 
         public override string ToString()
         {
@@ -61,17 +57,17 @@ namespace MTXEditorIO.Raw.TexPS2
         public uint checksum;
         public uint widthPowOfTwo;
         public uint heightPowOfTwo;
-        public TextureFormat format;
-        public PaletteFormat paletteFormat;
+        public PixelFormat format;
+        public PixelFormat paletteFormat;
         public uint mipMapLevels;
         public uint unknown2;
 
-        public uint Checksum => checksum;
-        public uint WidthPowOfTwo => widthPowOfTwo;
-        public uint HeightPowOfTwo => heightPowOfTwo;
-        public TextureFormat Format => format;
-        public PaletteFormat PaletteFormat => paletteFormat;
-        public uint MipMapLevels => mipMapLevels;
+        public uint Checksum { get { return checksum; } set { checksum = value; } }
+        public uint WidthPowOfTwo { get { return widthPowOfTwo; } set { widthPowOfTwo = value; } }
+        public uint HeightPowOfTwo { get { return heightPowOfTwo; } set { heightPowOfTwo = value; } }
+        public PixelFormat Format { get { return format; } set { format = value; } }
+        public PixelFormat PaletteFormat { get { return paletteFormat; } set { paletteFormat = value; } }
+        public uint MipMapLevels { get { return mipMapLevels; } set { mipMapLevels = value; } }
 
         public override string ToString()
         {
