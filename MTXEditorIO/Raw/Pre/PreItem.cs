@@ -19,6 +19,18 @@ namespace MTXEditorIO.Raw.Pre
         public PreItem(PreVersion preVersion)
         {
             this.preVersion = preVersion;
+            switch (preVersion)
+            {
+                case PreVersion.pre2:
+                    header = new PreItemHeader2();
+                    break;
+                case PreVersion.pre3:
+                case PreVersion.pre4:
+                    header = new PreItemHeader3_4();
+                    break;
+                default:
+                    throw new Exception("unsupported version: " + preVersion);
+            }
         }
 
         public uint GetFileNameCrc32()
@@ -43,7 +55,7 @@ namespace MTXEditorIO.Raw.Pre
             }
 
             byte[] fileNameBytes = reader.ReadBytes((int)header.FileNameLength);
-            fileName = StringUtils.GetString(fileNameBytes);
+            fileName = StringUtils.GetStringSafe(fileNameBytes);
             if (header.FileNameCrc != 0 && GetFileNameCrc32() != header.FileNameCrc)
             {
                 Console.WriteLine("Warning: filename crc missmatch for " + fileName);
@@ -85,7 +97,15 @@ namespace MTXEditorIO.Raw.Pre
             header.DeflatedSize = (uint)compressedData.Length;
             uint totalDataLength = (header.DeflatedSize + 3) & 0xFFFFFFFCu; //align to 4 bytes
 
-            writer.WriteStruct(header);
+            if (header is PreItemHeader2 header2)
+            {
+                writer.WriteStruct(header2);
+            }
+            else if (header is PreItemHeader3_4 header3_4)
+            {
+                writer.WriteStruct(header3_4);
+            }
+
             writer.Write(fileNameBytes);
             writer.Write(compressedData);
             writer.Write(new byte[totalDataLength - header.DeflatedSize]); //write alignment bytes

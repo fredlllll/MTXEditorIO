@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToTex", "ToTex\ToTex.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexToPng", "TexToPng\TexToPng.csproj", "{49014059-824E-4A07-ABC9-24E730EC4C3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnpackPre", "UnpackPre\UnpackPre.csproj", "{F36FBF95-FA0E-4CF8-80A3-165926CF8017}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackPre", "PackPre\PackPre.csproj", "{924D3DF5-1FA6-4CE2-AC83-195FC79AA859}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{49014059-824E-4A07-ABC9-24E730EC4C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49014059-824E-4A07-ABC9-24E730EC4C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49014059-824E-4A07-ABC9-24E730EC4C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F36FBF95-FA0E-4CF8-80A3-165926CF8017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F36FBF95-FA0E-4CF8-80A3-165926CF8017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F36FBF95-FA0E-4CF8-80A3-165926CF8017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F36FBF95-FA0E-4CF8-80A3-165926CF8017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{924D3DF5-1FA6-4CE2-AC83-195FC79AA859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{924D3DF5-1FA6-4CE2-AC83-195FC79AA859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{924D3DF5-1FA6-4CE2-AC83-195FC79AA859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{924D3DF5-1FA6-4CE2-AC83-195FC79AA859}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

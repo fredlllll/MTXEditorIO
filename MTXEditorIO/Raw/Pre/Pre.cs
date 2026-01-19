@@ -34,13 +34,16 @@ namespace MTXEditorIO.Raw.Pre
             header.id = 0xABCD;
             //ill leave version to the user
             writer.WriteStruct(header);
+            Console.WriteLine($"writing {header.itemCount} items");
             for (int i = 0; i < header.itemCount; i++)
             {
                 items[i].WriteTo(writer);
             }
             header.fileSize = (uint)(stream.Position - startPos);
+            long endPos = stream.Position;
             stream.Position = startPos;
             writer.Write(header.fileSize);
+            stream.Position = endPos;
         }
     }
 }
