@@ -36,15 +36,18 @@ namespace TexToPng
                 for (int i = 0; i < img.header.levels; ++i)
                 {
                     var layer = img.levels[i];
-                    
+
                     ColorRgba32[] colors;
                     switch (img.header.dxt)
                     {
                         case 1:
                             colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc1);
                             break;
-                        case 2: //a guess in the dark what this means, Bc1 without alpha also works on it, both produce a black image
+                        case 2: //a guess in the dark what this means, Bc1 without alpha also works on it, both produce a black image, DXT3/BC2 doesnt work
                             colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc1WithAlpha);
+                            break;
+                        case 5:
+                            colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc3);
                             break;
                         default:
                             throw new Exception($"Unsupported DXT format: {img.header.dxt}");
