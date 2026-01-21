@@ -25,7 +25,7 @@ namespace MTXEditorIO.Raw.TexPS2
         uint MipMapLevels { get; set; }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TexPS2FirstImgHeader : ITexPS2ImgHeader
     {
         public uint checksum;
@@ -50,7 +50,7 @@ namespace MTXEditorIO.Raw.TexPS2
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TexPS2ImgHeader : ITexPS2ImgHeader
     {
         public uint unknown1;

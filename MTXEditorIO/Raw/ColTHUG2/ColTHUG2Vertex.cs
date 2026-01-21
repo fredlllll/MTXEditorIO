@@ -2,6 +2,7 @@
 using MTXEditorIO.Util;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MTXEditorIO.Raw.ColTHUG2
@@ -11,6 +12,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
         Vec4 GetPos(ColTHUG2Object obj);
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColTHUG2FixedVertex : IColTHUG2Vertex
     {
         public ushort x, y, z;
@@ -26,6 +28,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
         }
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColTHUG2Vertex : IColTHUG2Vertex
     {
         public float x, y, z;

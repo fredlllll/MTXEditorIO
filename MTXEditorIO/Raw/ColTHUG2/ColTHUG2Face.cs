@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MTXEditorIO.Raw.ColTHUG2
@@ -13,6 +14,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
         public ushort VertIndex3 { get; set; }
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColTHUG2SmallFace : IColTHUG2Face
     {
         public ushort flags;
@@ -28,7 +30,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
         public ushort VertIndex2 { get { return vertIndex2; } set { vertIndex2 = (byte)value; } }
         public ushort VertIndex3 { get { return vertIndex3; } set { vertIndex3 = (byte)value; } }
     }
-
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColTHUG2Face : IColTHUG2Face
     {
         public ushort flags;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.TexPC
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TexPCHeader
     {
         /// <summary>
@@ -15,6 +15,6 @@ namespace MTXEditorIO.Raw.TexPC
         /// <summary>
         /// number of images in this tex file
         /// </summary>
-        public uint imageNum; 
+        public uint imageNum;
     }
 }

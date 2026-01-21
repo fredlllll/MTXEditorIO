@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MTXEditorIO.Raw.Pre
@@ -13,6 +14,7 @@ namespace MTXEditorIO.Raw.Pre
         public bool IsCompressed => (DeflatedSize != 0) && (DeflatedSize < InflatedSize);
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PreItemHeader2 : IPreItemHeader
     {
         public uint inflatedSize;
@@ -25,6 +27,7 @@ namespace MTXEditorIO.Raw.Pre
         public uint FileNameCrc { get { return 0; } set { } }
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PreItemHeader3_4 : IPreItemHeader
     {
         public uint inflatedSize;

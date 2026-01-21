@@ -12,6 +12,11 @@ namespace PackPre
                 Console.WriteLine("Input folder doesnt exist");
                 return;
             }
+            if (inputFolder.EndsWith("_dir"))
+            {
+                //strip off the _dir that unpack added if present
+                inputFolder = inputFolder.Substring(0, inputFolder.Length - 4);
+            }
 
             //just gonna go with version 4 for everything for now till a need for anything else arises
 

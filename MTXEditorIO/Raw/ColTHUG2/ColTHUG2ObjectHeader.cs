@@ -7,7 +7,7 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.ColTHUG2
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColTHUG2ObjectHeader
     {
         public uint checksum;
@@ -34,7 +34,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
 
         public override string ToString()
         {
-            return Output.ToString(this,"\n");
+            return Output.ToString(this, "\n");
         }
     }
 }

@@ -7,7 +7,8 @@ namespace UnpackPre
         static void Main(string[] args)
         {
             string inputFile = Path.GetFullPath(args[0]);
-            string outputDir = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile));
+            //need to append _dir in case we dont have a file extension with a . cause windows doesnt support a dir and file with the same name
+            string outputDir = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + "_dir");
 
             using var fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 

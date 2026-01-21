@@ -13,7 +13,7 @@ namespace MTXEditorIO.Raw.TexPS2
 
         public void ReadFrom(Stream stream)
         {
-            using var reader = new StructReader(stream, Encoding.ASCII, true);
+            using var reader = new BinaryReader(stream, Encoding.ASCII, true);
 
             header = reader.ReadStruct<TexPS2Header>();
             images = new TexPS2Img[header.imageNum];

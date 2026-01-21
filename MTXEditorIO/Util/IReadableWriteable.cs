@@ -7,8 +7,8 @@ namespace MTXEditorIO.Util
 {
     public interface IReadableWriteable
     {
-        void ReadFrom(StructReader reader);
-        void WriteTo(StructWriter writer);
+        void ReadFrom(BinaryReader reader);
+        void WriteTo(BinaryWriter writer);
     }
 
     public interface IReadableWriteableFromStream

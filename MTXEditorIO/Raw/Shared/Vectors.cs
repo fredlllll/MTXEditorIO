@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.Shared
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Vec4
     {
         public float x, y, z, w;
@@ -16,7 +16,7 @@ namespace MTXEditorIO.Raw.Shared
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Vec3
     {
         public float x, y, z;
@@ -27,7 +27,7 @@ namespace MTXEditorIO.Raw.Shared
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Vec2
     {
         public float x, y;

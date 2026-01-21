@@ -1,6 +1,7 @@
 ﻿using MTXEditorIO.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace MTXEditorIO.Raw.TexPS2
@@ -19,7 +20,7 @@ namespace MTXEditorIO.Raw.TexPS2
             this.isFirstImage = isFirstImage;
         }
 
-        public void ReadFrom(StructReader reader)
+        public void ReadFrom(BinaryReader reader)
         {
             uint id = reader.ReadUInt32();
             if (!isFirstImage && id != 0)
@@ -98,7 +99,7 @@ namespace MTXEditorIO.Raw.TexPS2
             }
         }
 
-        public void WriteTo(StructWriter writer)
+        public void WriteTo(BinaryWriter writer)
         {
             throw new NotImplementedException();
         }

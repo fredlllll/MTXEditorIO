@@ -14,7 +14,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
 
         public void ReadFrom(Stream stream)
         {
-            var reader = new StructReader(stream, Encoding.ASCII, true);
+            var reader = new BinaryReader(stream, Encoding.ASCII, true);
 
             header = reader.ReadStruct<ColTHUG2Header>();
 
@@ -71,7 +71,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
 
         public void WriteTo(Stream stream)
         {
-            var writer = new StructWriter(stream, Encoding.ASCII, true);
+            var writer = new BinaryWriter(stream, Encoding.ASCII, true);
             throw new NotImplementedException();
         }
     }

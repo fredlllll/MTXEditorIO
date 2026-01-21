@@ -4,6 +4,7 @@ using MTXEditorIO.Util.Compression;
 using MTXEditorIO.Util.Hashing;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace MTXEditorIO.Raw.Pre
@@ -39,7 +40,7 @@ namespace MTXEditorIO.Raw.Pre
             return Crc32IEEE.Hash(StringUtils.GetBytes(fileName.ToLower()));
         }
 
-        public void ReadFrom(StructReader reader)
+        public void ReadFrom(BinaryReader reader)
         {
             if (preVersion == PreVersion.pre2)
             {
@@ -87,7 +88,7 @@ namespace MTXEditorIO.Raw.Pre
             }
         }
 
-        public void WriteTo(StructWriter writer)
+        public void WriteTo(BinaryWriter writer)
         {
             header.FileNameCrc = GetFileNameCrc32();
             var fileNameBytes = StringUtils.GetBytes(fileName);

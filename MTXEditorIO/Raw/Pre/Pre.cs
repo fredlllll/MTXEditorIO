@@ -15,7 +15,7 @@ namespace MTXEditorIO.Raw.Pre
 
         public void ReadFrom(Stream stream)
         {
-            using var reader = new StructReader(stream, Encoding.ASCII, true);
+            using var reader = new BinaryReader(stream, Encoding.ASCII, true);
             header = reader.ReadStruct<PreHeader>();
 
             items = new PreItem[header.itemCount];
@@ -29,7 +29,7 @@ namespace MTXEditorIO.Raw.Pre
         public void WriteTo(Stream stream)
         {
             long startPos = stream.Position;
-            using var writer = new StructWriter(stream, Encoding.ASCII, true);
+            using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
             header.itemCount = (uint)items.Length;
             header.id = 0xABCD;
             //ill leave version to the user

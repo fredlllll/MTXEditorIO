@@ -1,10 +1,12 @@
 ﻿using MTXEditorIO.Util;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MTXEditorIO.Raw.ColTHUG2
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColTHUG2Header
     {
         public uint version; //should be 9

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.TexPS2
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TexPS2Header
     {
         public uint id;
@@ -15,7 +15,7 @@ namespace MTXEditorIO.Raw.TexPS2
         public InnerHeader innerHeader;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct InnerHeader
     {
         public uint unknown1;

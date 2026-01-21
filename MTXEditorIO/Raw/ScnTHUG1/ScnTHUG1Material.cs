@@ -1,0 +1,38 @@
+﻿using MTXEditorIO.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace MTXEditorIO.Raw.ScnTHUG1
+{
+    public class ScnTHUG1Material :IReadableWriteable
+    {
+        public ScnTHUG1MaterialHeader header = new ScnTHUG1MaterialHeader();
+        public ScnTHUG1MaterialPass[] passes = Array.Empty<ScnTHUG1MaterialPass>();
+
+        public void ReadFrom(BinaryReader reader)
+        {
+            header = new ScnTHUG1MaterialHeader();
+            header.ReadFrom(reader);
+            Console.WriteLine(Output.ToString(header));
+            passes = new ScnTHUG1MaterialPass[header.fixedHeader.materialPasses];
+            Console.WriteLine("numPasses: " + passes.Length);
+            for(int i =0; i< passes.Length; ++i)
+            {
+                var pass = passes[i] = new ScnTHUG1MaterialPass(i == 0);
+                pass.ReadFrom(reader);
+            }
+        }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return $"  {header}\n  {passes[0]}";
+        }
+    }
+}

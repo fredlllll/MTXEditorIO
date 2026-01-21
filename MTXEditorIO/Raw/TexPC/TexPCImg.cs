@@ -1,6 +1,7 @@
 ﻿using MTXEditorIO.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace MTXEditorIO.Raw.TexPC
@@ -10,7 +11,7 @@ namespace MTXEditorIO.Raw.TexPC
         public TexPCImgHeader header;
         public TexPCImgLevel[] levels = Array.Empty<TexPCImgLevel>();
 
-        public void ReadFrom(StructReader reader)
+        public void ReadFrom(BinaryReader reader)
         {
             header = reader.ReadStruct<TexPCImgHeader>();
             Console.WriteLine(header);
@@ -23,7 +24,7 @@ namespace MTXEditorIO.Raw.TexPC
             }
         }
 
-        public void WriteTo(StructWriter writer)
+        public void WriteTo(BinaryWriter writer)
         {
             writer.WriteStruct(header);
             for (int i = 0; i < levels.Length; i++)

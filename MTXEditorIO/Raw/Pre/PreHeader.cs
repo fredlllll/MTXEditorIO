@@ -14,7 +14,7 @@ namespace MTXEditorIO.Raw.Pre
         pre4 = 4,
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PreHeader
     {
         public uint fileSize;

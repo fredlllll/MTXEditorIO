@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+
+namespace MTXEditorIO.Util
+{
+    public static class BinaryWriterExtensions
+    {
+        public static void WriteStruct<T>(this Stream stream, T obj) where T : unmanaged
+        {
+            Span<byte> buffer = stackalloc byte[Marshal.SizeOf<T>()];
+            MemoryMarshal.Write(buffer, ref obj);
+            stream.Write(buffer);
+        }
+
+        public static void WriteStruct<T>(this BinaryWriter writer, T obj) where T : unmanaged
+        {
+            writer.BaseStream.WriteStruct(obj);
+        }
+
+        public static void WriteStructs<T>(this Stream stream, T[] values) where T : unmanaged
+        {
+            for (int i = 0; i < values.Length; ++i)
+            {
+                stream.WriteStruct(values[i]);
+            }
+        }
+
+        public static void WriteStructs<T>(this BinaryWriter writer, T[] values) where T : unmanaged
+        {
+            writer.BaseStream.WriteStructs(values);
+        }
+    }
+}
