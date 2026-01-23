@@ -1,7 +1,7 @@
 ﻿using BCnEncoder.Decoder;
 using BCnEncoder.Shared;
 using CSWavefront.Raw;
-using MTXEditorIO.Raw.ColTHUG2;
+using MTXEditorIO.Raw.Col;
 using MTXEditorIO.Raw.Pre;
 using MTXEditorIO.Raw.ScnTHUG1;
 using MTXEditorIO.Raw.TexPC;
@@ -21,20 +21,18 @@ namespace Test
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
+            string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\not working\\GhostTown.col.ps2";
             //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\working\\CompoundscnZpre_dir\\Levels\\Compound\\Compound.scn.xbx";
-            string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\not working\\blenderout\\Levels\\gt.scn.xbx";
+            //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\not working\\blenderout\\Levels\\gt.scn.xbx";
             //string fileNameNoExt = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + "_dir");
 
             using var fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var fileSize = fs.Length;
 
-            var scn = new ScnTHUG1();
-            scn.ReadFrom(fs);
+            var col = new Col();
+            col.ReadFrom(fs);
 
             Console.WriteLine($"Done reading, trailing bytes: {fs.Length - fs.Position}, streampos at {fs.Position}");
-
-            /*var col = new ColTHUG2();
-            col.ReadFrom(fs);
 
             var model = new ObjFile();
             var levelMesh = model.objects["aaa"];
@@ -73,7 +71,7 @@ namespace Test
             }
             Console.WriteLine("");
 
-            ObjSaver.Save(model, "GhostTown.obj");*/
+            ObjSaver.Save(model, "GhostTown.obj");
 
 
         }

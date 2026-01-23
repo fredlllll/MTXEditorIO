@@ -5,21 +5,21 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MTXEditorIO.Raw.ColTHUG2
+namespace MTXEditorIO.Raw.Col
 {
-    public interface IColTHUG2Vertex
+    public interface IColVertex
     {
-        Vec4 GetPos(ColTHUG2Object obj);
+        Vec3 GetPos(ColObject obj);
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ColTHUG2FixedVertex : IColTHUG2Vertex
+    public struct ColSmallVertex : IColVertex
     {
         public ushort x, y, z;
 
-        public Vec4 GetPos(ColTHUG2Object obj)
+        public Vec3 GetPos(ColObject obj)
         {
-            return new Vec4()
+            return new Vec3()
             {
                 x = obj.header.boundingBoxMin.x + x * 0.0625f,
                 y = obj.header.boundingBoxMin.y + y * 0.0625f,
@@ -29,13 +29,13 @@ namespace MTXEditorIO.Raw.ColTHUG2
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ColTHUG2Vertex : IColTHUG2Vertex
+    public struct ColVertex : IColVertex
     {
         public float x, y, z;
 
-        public Vec4 GetPos(ColTHUG2Object obj)
+        public Vec3 GetPos(ColObject obj)
         {
-            return new Vec4()
+            return new Vec3()
             {
                 x = x,
                 y = y,

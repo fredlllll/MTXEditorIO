@@ -4,20 +4,19 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MTXEditorIO.Raw.ColTHUG2
+namespace MTXEditorIO.Raw.Col
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ColTHUG2Header
+    public struct ColHeader
     {
         public uint version; //should be 9
         public uint numObjects;
         public uint totalVerts;
         public uint totalLargeFaces;
-
         public uint totalSmallFaces;
         public uint totalLargeVerts;
         public uint totalSmallVerts;
-        public uint unknown;
+        public uint padding;
 
         public override string ToString()
         {

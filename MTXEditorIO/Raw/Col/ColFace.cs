@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MTXEditorIO.Raw.ColTHUG2
+namespace MTXEditorIO.Raw.Col
 {
-    public interface IColTHUG2Face
+    public interface IColFace
     {
         public ushort Flags { get; set; }
         public ushort TerrainType { get; set; }
@@ -15,7 +15,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ColTHUG2SmallFace : IColTHUG2Face
+    public struct ColSmallFace : IColFace
     {
         public ushort flags;
         public ushort terrainType;
@@ -31,7 +31,7 @@ namespace MTXEditorIO.Raw.ColTHUG2
         public ushort VertIndex3 { get { return vertIndex3; } set { vertIndex3 = (byte)value; } }
     }
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ColTHUG2Face : IColTHUG2Face
+    public struct ColFace : IColFace
     {
         public ushort flags;
         public ushort terrainType;

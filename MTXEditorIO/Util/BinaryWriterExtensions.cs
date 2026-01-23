@@ -32,5 +32,25 @@ namespace MTXEditorIO.Util
         {
             writer.BaseStream.WriteStructs(values);
         }
+
+        public static void PadTo(this Stream stream, long positionToPadTo)
+        {
+            int paddingBytes = 0;
+            checked
+            {
+                paddingBytes = (int)(positionToPadTo - stream.Position);
+            }
+            if (paddingBytes < 0)
+            {
+                throw new Exception("paddingBytes cant be negative");
+            }
+            Span<byte> buffer = stackalloc byte[paddingBytes];
+            stream.Write(buffer);
+        }
+
+        public static void PadTo(this BinaryWriter writer, long positionToPadTo)
+        {
+            writer.BaseStream.PadTo(positionToPadTo);
+        }
     }
 }
