@@ -74,8 +74,8 @@ namespace MTXEditorIO.Raw.Col
 
         public void ReadBSP(BinaryReader reader)
         {
-            bspTree = new ColBSPTree();
-            bspTree.ReadFrom(reader);
+            //bspTree = new ColBSPTree();
+            //bspTree.ReadFrom(reader);
         }
 
         public void WriteDummyHeader(BinaryWriter writer, ColOffsets offsets)

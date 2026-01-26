@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MTXEditorIO.Raw.Col
@@ -14,6 +15,7 @@ namespace MTXEditorIO.Raw.Col
         Leaf = 3,
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColBSPNodeLeaf
     {
         public BSPSplitAxis type;
@@ -22,10 +24,11 @@ namespace MTXEditorIO.Raw.Col
         public uint nodeFaceIndexOffset; //offset of the face list inside the bsp faces block
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColBSPNodeAxisSplit
     {
         public uint splitAxisAndPoint; //2 lsbs are split axis type, upper 30 are int(16*split point)
-        public uint leftNodeIndex;
+        public uint leftNodeOffset;
 
         public BSPSplitAxis SplitAxis { 
             get { return (BSPSplitAxis)(splitAxisAndPoint & 0b11); }

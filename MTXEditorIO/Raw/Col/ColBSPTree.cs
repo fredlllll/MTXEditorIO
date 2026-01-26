@@ -6,41 +6,153 @@ using System.Text;
 
 namespace MTXEditorIO.Raw.Col
 {
-    public class ColBSPTree :IReadableWriteable
+    public class ColBSPTree : IReadableWriteable
     {
+        private class Frame { public TreeNode Node; public long Offset; public bool LeftDone; public bool RightDone; }
+
         const int BSPNodeSize = 8; // all nodes are 8 bytes in size
 
         public TreeNode root = null!;
 
         public void ReadFrom(BinaryReader reader)
         {
-            root = ReadTree(reader);
+            root = ReadTreeIterative(reader);
         }
 
-        private TreeNode ReadTree(BinaryReader reader)
+        public TreeNode ReadTreeIterative(BinaryReader reader)
         {
-            var node = new TreeNode();
+            long rootOffset = reader.BaseStream.Position;
 
-            var binaryNode = ReadBinaryNode(reader);
-            if (binaryNode.type == BSPSplitAxis.Leaf)
+            var root = new TreeNode();
+            var stack = new Stack<Frame>();
+
+            stack.Push(new Frame { Node = root, Offset = rootOffset });
+
+            while (stack.Count > 0)
             {
-                Console.WriteLine("found leaf");
-                node.isLeaf = true;
-                var d = node.leafData = new TreeNode.LeafData();
-                d.numFaces = binaryNode.leaf.numFaces;
-                d.nodeFaceIndexOffset = binaryNode.leaf.nodeFaceIndexOffset;
+                var frame = stack.Peek();
+                reader.BaseStream.Position = frame.Offset;
+
+                var binaryNode = ReadBinaryNode(reader);
+
+                if (binaryNode.type == BSPSplitAxis.Leaf)
+                {
+                    frame.Node.isLeaf = true;
+                    frame.Node.leafData = new TreeNode.LeafData
+                    {
+                        numFaces = binaryNode.leaf.numFaces,
+                        nodeFaceIndexOffset = binaryNode.leaf.nodeFaceIndexOffset
+                    };
+
+                    frame.Node.serializedSize = BSPNodeSize;
+                    stack.Pop();
+                }
+                else if (!frame.LeftDone)
+                {
+                    frame.Node.isLeaf = false;
+                    frame.Node.nodeData = new TreeNode.NodeData
+                    {
+                        splitAxis = binaryNode.axisSplit.SplitAxis,
+                        splitPoint = binaryNode.axisSplit.SplitPoint,
+                        leftNodeIndex = binaryNode.axisSplit.leftNodeOffset
+                    };
+
+                    long leftOffset = binaryNode.axisSplit.leftNodeOffset;// rootOffset + (binaryNode.axisSplit.leftNodeIndex * BSPNodeSize);
+
+                    frame.Node.nodeData.left = new TreeNode();
+                    stack.Push(new Frame { Node = frame.Node.nodeData.left, Offset = leftOffset });
+
+                    frame.LeftDone = true;
+                }
+                else if (!frame.RightDone)
+                {
+                    long rightOffset = frame.Offset + BSPNodeSize + frame.Node.nodeData.left.serializedSize;
+
+                    frame.Node.nodeData.right = new TreeNode();
+                    stack.Push(new Frame { Node = frame.Node.nodeData.right, Offset = rightOffset });
+
+                    frame.RightDone = true;
+                }
+                else
+                {
+
+                    // Both children done → compute size and pop
+                    frame.Node.serializedSize =
+                        BSPNodeSize +
+                        frame.Node.nodeData.left.serializedSize +
+                        frame.Node.nodeData.right.serializedSize;
+
+                    stack.Pop();
+                }
             }
-            else
-            {
-                var d = node.nodeData = new TreeNode.NodeData();
-                d.left = ReadTree(reader);
-                d.right = ReadTree(reader);
-                d.splitAxis = binaryNode.axisSplit.SplitAxis;
-                d.splitPoint = binaryNode.axisSplit.SplitPoint;
-                d.leftNodeIndex = binaryNode.axisSplit.leftNodeIndex; //unsure if we really need to store this
-            }
-            return node;
+
+            return root;
         }
+
+
+        /*public TreeNode ReadTreeIterative(BinaryReader reader)
+        {
+            long rootOffset = reader.BaseStream.Position;
+
+            var root = new TreeNode();
+            var stack = new Stack<Frame>();
+
+            stack.Push(new Frame { Node = root, Offset = rootOffset });
+
+            while (stack.Count > 0)
+            {
+                var frame = stack.Peek();
+                reader.BaseStream.Position = frame.Offset;
+
+                var binaryNode = ReadBinaryNode(reader);
+
+                if (binaryNode.type == BSPSplitAxis.Leaf)
+                {
+                    frame.Node.isLeaf = true;
+                    frame.Node.leafData = new TreeNode.LeafData
+                    {
+                        numFaces = binaryNode.leaf.numFaces,
+                        nodeFaceIndexOffset = binaryNode.leaf.nodeFaceIndexOffset
+                    };
+
+                    frame.Node.serializedSize = 8;
+                    stack.Pop();
+                    continue;
+                }
+                else if (!frame.LeftDone)
+                {
+                    frame.Node.isLeaf = false;
+                    frame.Node.nodeData = new TreeNode.NodeData
+                    {
+                        splitAxis = binaryNode.axisSplit.SplitAxis,
+                        splitPoint = binaryNode.axisSplit.SplitPoint,
+                        leftNodeIndex = binaryNode.axisSplit.leftNodeIndex
+                    };
+
+                    long leftOffset = rootOffset + (binaryNode.axisSplit.leftNodeIndex * BSPNodeSize);
+
+                    frame.Node.nodeData.left = new TreeNode();
+                    stack.Push(new Frame { Node = frame.Node.nodeData.left, Offset = leftOffset });
+
+                    frame.LeftDone = true;
+                    continue;
+                }
+                else
+                {
+                    // Left subtree done → compute right offset
+                    long rightOffset = frame.Offset + 8 + frame.Node.nodeData.left.serializedSize;
+
+                    frame.Node.nodeData.right = new TreeNode();
+                    stack.Push(new Frame { Node = frame.Node.nodeData.right, Offset = rightOffset });
+
+                    // After pushing right child, mark this frame as complete
+                    stack.Pop();
+                }
+            }
+
+            return root;
+        }*/
+
 
         private ColBSPNode ReadBinaryNode(BinaryReader reader)
         {
@@ -75,5 +187,6 @@ namespace MTXEditorIO.Raw.Col
         public bool isLeaf;
         public LeafData? leafData;
         public NodeData? nodeData;
+        public uint serializedSize;
     }
 }

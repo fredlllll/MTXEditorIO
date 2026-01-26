@@ -118,11 +118,20 @@ namespace MTXEditorIO.Raw.Col
         public long baseBSPOffset;
         public ColOffsets(ColHeader header)
         {
-            baseVertOffset = (Marshal.SizeOf<ColHeader>() + Marshal.SizeOf<ColObjectHeader>() * header.numObjects + 15) & 0xFFFFFFF0; //16 byte aligned
+            var vertOffsetUnaligned = Marshal.SizeOf<ColHeader>() + Marshal.SizeOf<ColObjectHeader>() * header.numObjects;
+            baseVertOffset = (vertOffsetUnaligned + 15) & 0xFFFFFFF0; //16 byte aligned
+            //intensities arent aligned
             baseIntensityOffset = baseVertOffset + header.totalLargeVerts * Marshal.SizeOf<ColVertex>() + header.totalSmallVerts * Marshal.SizeOf<ColSmallVertex>();
-            baseFaceOffset = (baseIntensityOffset + header.totalVerts + 3) & 0xFFFFFFFC;//4 byte aligned
-            baseBSPOffset = (baseFaceOffset + header.totalSmallFaces * Marshal.SizeOf<ColSmallFace>() + header.totalLargeFaces * Marshal.SizeOf<ColFace>()+3) & 0xFFFFFFFC;
-            //TODO: bsp aligment
+            var faceOffsetUnaligned = baseIntensityOffset + header.totalVerts;
+            baseFaceOffset = (faceOffsetUnaligned + 3) & 0xFFFFFFFC;//4 byte aligned
+            var bspOffsetUnaligned = baseFaceOffset + header.totalSmallFaces * Marshal.SizeOf<ColSmallFace>() + header.totalLargeFaces * Marshal.SizeOf<ColFace>();
+            baseBSPOffset = (bspOffsetUnaligned + 7) & 0xFFFFFFF8;
+            //there is another block after the bsp but i have no idea what it is
+
+            Console.WriteLine($"vertOffset: {vertOffsetUnaligned} | {baseVertOffset} (difference: {baseVertOffset - vertOffsetUnaligned})");
+            Console.WriteLine($"intensityOffset: {baseIntensityOffset}");
+            Console.WriteLine($"faceOffset: {faceOffsetUnaligned} | {baseFaceOffset} (difference: {baseFaceOffset - faceOffsetUnaligned})");
+            Console.WriteLine($"bspOffset: {bspOffsetUnaligned} | {baseBSPOffset} (difference: {baseBSPOffset - bspOffsetUnaligned})");
         }
     }
 }

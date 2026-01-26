@@ -22,6 +22,7 @@ namespace Test
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
             string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\not working\\GhostTown.col.ps2";
+            inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\working\\Compound.col.xbx";
             //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\working\\CompoundscnZpre_dir\\Levels\\Compound\\Compound.scn.xbx";
             //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\not working\\blenderout\\Levels\\gt.scn.xbx";
             //string fileNameNoExt = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + "_dir");
