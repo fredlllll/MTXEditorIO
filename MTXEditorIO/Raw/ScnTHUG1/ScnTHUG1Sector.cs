@@ -27,7 +27,7 @@ namespace MTXEditorIO.Raw.ScnTHUG1
             }
 
             uint numVerts = reader.ReadUInt32();
-            uint vertexDataStride = reader.ReadUInt32();
+            uint vertexDataStride = reader.ReadUInt32(); //seems to be ignored
             vertexPositions = new Vec3[numVerts];
             for (int i = 0; i < numVerts; i++)
             {
@@ -43,7 +43,8 @@ namespace MTXEditorIO.Raw.ScnTHUG1
                 }
             }
 
-            if (header.flags.HasFlag(SectorFlags.HAS_VERTEX_WEIGHTS)) {
+            if (header.flags.HasFlag(SectorFlags.HAS_VERTEX_WEIGHTS))
+            {
                 vertexWeights = new uint[numVerts];
                 for (int i = 0; i < numVerts; i++)
                 {
@@ -56,13 +57,14 @@ namespace MTXEditorIO.Raw.ScnTHUG1
                 }
             }
 
-            if (header.flags.HasFlag(SectorFlags.HAS_TEXCOORDS)) {
-                uint numTexCoords = reader.ReadUInt32();
+            if (header.flags.HasFlag(SectorFlags.HAS_TEXCOORDS))
+            {
+                uint numTexCoordsPerVertex = reader.ReadUInt32();
                 vertexTexCoords = new Vec2[numVerts][];
                 for (int i = 0; i < numVerts; i++)
                 {
-                    var tcs =  vertexTexCoords[i] = new Vec2[numTexCoords];
-                    for(int j = 0; j< numTexCoords; j++)
+                    var tcs = vertexTexCoords[i] = new Vec2[numTexCoordsPerVertex];
+                    for (int j = 0; j < numTexCoordsPerVertex; j++)
                     {
                         tcs[j] = reader.ReadStruct<Vec2>();
                     }
@@ -78,7 +80,8 @@ namespace MTXEditorIO.Raw.ScnTHUG1
                 }
             }
 
-            if (header.flags.HasFlag(SectorFlags.HAS_VERTEX_COLOR_WIBBLES)) {
+            if (header.flags.HasFlag(SectorFlags.HAS_VERTEX_COLOR_WIBBLES))
+            {
                 vertexWibbles = reader.ReadBytes((int)numVerts);
             }
 
@@ -92,7 +95,72 @@ namespace MTXEditorIO.Raw.ScnTHUG1
 
         public void WriteTo(BinaryWriter writer)
         {
-            throw new System.NotImplementedException();
+            header.numMeshes = (uint)meshes.Length;
+            writer.WriteStruct(header);
+            if (header.flags.HasFlag(SectorFlags.BILLBOARD_PRESENT))
+            {
+                writer.WriteStruct(billboard);
+            }
+
+            uint numVerts = (uint)vertexPositions.Length;
+            writer.Write(numVerts);
+            writer.Write((uint)0); //vertexDataStride, seems to be ignored
+            for (int i = 0; i < numVerts; i++)
+            {
+                writer.WriteStruct(vertexPositions[i]);
+            }
+
+            if (header.flags.HasFlag(SectorFlags.HAS_VERTEX_NORMALS))
+            {
+                for (int i = 0; i < numVerts; i++)
+                {
+                    writer.WriteStruct(vertexNormals[i]);
+                }
+            }
+
+            if (header.flags.HasFlag(SectorFlags.HAS_VERTEX_WEIGHTS))
+            {
+                for (int i = 0; i < numVerts; i++)
+                {
+                    writer.WriteStruct(vertexWeights[i]);
+                }
+                for (int i = 0; i < numVerts; i++)
+                {
+                    writer.WriteStruct(bones[i]);
+                }
+            }
+
+            if (header.flags.HasFlag(SectorFlags.HAS_TEXCOORDS))
+            {
+                uint numTexCoordsPerVertex = (uint)vertexTexCoords[0].Length;
+                writer.Write(numTexCoordsPerVertex);
+                for (int i = 0; i < numVerts; i++)
+                {
+                    var tcs = vertexTexCoords[i];
+                    for (int j = 0; j < numTexCoordsPerVertex; j++)
+                    {
+                        writer.WriteStruct(tcs[j]);
+                    }
+                }
+            }
+
+            if (header.flags.HasFlag(SectorFlags.HAS_VERTEX_COLORS))
+            {
+                for (int i = 0; i < numVerts; i++)
+                {
+                    writer.Write(vertexColors[i]);
+                }
+            }
+
+            if(header.flags.HasFlag(SectorFlags.HAS_VERTEX_COLOR_WIBBLES))
+            {
+                writer.Write(vertexWibbles,0,(int)numVerts);
+            }
+
+            for(int i = 0; i < meshes.Length; i++)
+            {
+                meshes[i].WriteTo(writer);
+            }
         }
     }
 }

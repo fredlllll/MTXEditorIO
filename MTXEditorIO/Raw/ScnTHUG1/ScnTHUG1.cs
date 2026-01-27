@@ -17,7 +17,6 @@ namespace MTXEditorIO.Raw.ScnTHUG1
             var reader = new BinaryReader(stream, Encoding.ASCII, true);
 
             header = reader.ReadStruct<ScnTHUG1Header>();
-            Console.WriteLine(Output.ToString(header));
 
             uint numMaterials = reader.ReadUInt32();
             Console.WriteLine($"numMaterials: {numMaterials}");
@@ -41,7 +40,26 @@ namespace MTXEditorIO.Raw.ScnTHUG1
 
         public void WriteTo(Stream stream)
         {
-            throw new NotImplementedException();
+            var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+
+            //versions are always 1
+            header.vertVersion = 1;
+            header.meshVersion = 1;
+            header.matVersion = 1;
+            writer.WriteStruct(header);
+
+            writer.Write((uint)materials.Length);
+            for(int i = 0; i < materials.Length; i++)
+            {
+                materials[i].WriteTo(writer);
+            }
+
+            writer.Write((uint)sectors.Length);
+            for (int i = 0; i < sectors.Length; i++)
+            {
+                sectors[i].WriteTo(writer);
+            }
+            writer.Write((uint)0); //unknown footer value
         }
     }
 }

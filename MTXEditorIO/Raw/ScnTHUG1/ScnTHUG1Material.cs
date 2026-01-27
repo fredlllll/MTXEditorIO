@@ -15,9 +15,7 @@ namespace MTXEditorIO.Raw.ScnTHUG1
         {
             header = new ScnTHUG1MaterialHeader();
             header.ReadFrom(reader);
-            Console.WriteLine(Output.ToString(header));
             passes = new ScnTHUG1MaterialPass[header.fixedHeader.materialPasses];
-            Console.WriteLine("numPasses: " + passes.Length);
             for(int i =0; i< passes.Length; ++i)
             {
                 var pass = passes[i] = new ScnTHUG1MaterialPass(i == 0);
@@ -27,7 +25,13 @@ namespace MTXEditorIO.Raw.ScnTHUG1
 
         public void WriteTo(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            header.fixedHeader.materialPasses = (uint)passes.Length;
+            header.WriteTo(writer);
+            passes[0].isFirstPass = true;
+            for (int i = 0; i < passes.Length; ++i)
+            {
+                passes[i].WriteTo(writer);
+            }
         }
 
         public override string ToString()
