@@ -36,5 +36,25 @@ namespace MTXEditorIO.Util
         {
             return reader.BaseStream.ReadStructs<T>(count);
         }
+
+        // read a null-terminated c string
+        public static string ReadCString(this BinaryReader reader)
+        {
+            using var ms = new MemoryStream();
+            byte b;
+            while ((b = reader.ReadByte()) != 0)
+            {
+                ms.WriteByte(b);
+            }
+            return Encoding.ASCII.GetString(ms.ToArray());
+        }
+
+        // read a fixed length string, length prefixed as Int32
+        public static string ReadFixedString(this BinaryReader reader)
+        {
+            int byteCount = reader.ReadInt32();
+            var bytes = reader.ReadBytes(byteCount);
+            return Encoding.ASCII.GetString(bytes);
+        }
     }
 }

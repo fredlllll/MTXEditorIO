@@ -5,6 +5,7 @@ using MTXEditorIO.Raw.Col;
 using MTXEditorIO.Raw.Pre;
 using MTXEditorIO.Raw.ScnTHUG1;
 using MTXEditorIO.Raw.TexPC;
+using MTXEditorIO.Raw.Zqb;
 using MTXEditorIO.Util;
 using MTXEditorIO.Util.Hashing;
 using SixLabors.ImageSharp;
@@ -21,16 +22,34 @@ namespace Test
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
-            string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\not working\\GhostTown.col.ps2";
-            inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\working\\Compound.col.xbx";
-            //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\working\\CompoundscnZpre_dir\\Levels\\Compound\\Compound.scn.xbx";
-            //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\ghosttownstuff\\not working\\blenderout\\Levels\\gt.scn.xbx";
+            string folder = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data";
+            foreach (var file in Directory.GetFiles(folder, "*zqb", SearchOption.AllDirectories))
+            {
+                using var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                var zqb = new Zqb();
+                try
+                {
+                    zqb.ReadFrom(fs);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error reading ZQB: {file}, ex: {ex}");
+                    continue;
+                }
+                Console.WriteLine($"Read ZQB: {file}, chunks: {zqb.Chunks.Length}");
+            }
+
+
+            //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data\\levels\\Atlanta\\Atlanta_scriptsZqb";
             //string fileNameNoExt = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + "_dir");
 
-            using var fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            /*using var fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var fileSize = fs.Length;
 
-            var col = new Col();
+            var zqb = new Zqb();
+            zqb.ReadFrom(fs);*/
+
+            /*var col = new Col();
             col.ReadFrom(fs);
 
             Console.WriteLine($"Done reading, trailing bytes: {fs.Length - fs.Position}, streampos at {fs.Position}");
@@ -73,7 +92,7 @@ namespace Test
             Console.WriteLine("");
 
             ObjSaver.Save(model, "GhostTown.obj");
-
+            */
 
         }
     }

@@ -52,5 +52,21 @@ namespace MTXEditorIO.Util
         {
             writer.BaseStream.PadTo(positionToPadTo);
         }
+
+        //write a null-terminated c string
+        public static void WriteCString(this BinaryWriter writer, string str)
+        {
+            var bytes = Encoding.ASCII.GetBytes(str);
+            writer.Write(bytes);
+            writer.Write((byte)0x00);
+        }
+
+        //write a length-prefixed string, with length as Int32
+        public static void WriteFixedString(this BinaryWriter writer, string str)
+        {
+            var bytes = Encoding.ASCII.GetBytes(str);
+            writer.Write(bytes.Length);
+            writer.Write(bytes);
+        }
     }
 }

@@ -43,9 +43,11 @@ namespace MTXEditorIO.Util
             return retval;
         }
 
-        public static string ToString<T>(this T val, string seperator = " ")
+        public static string ToString(object val, string seperator = " ")
         {
-            var type = typeof(T);
+            if(val == null)
+                return "null";
+            var type = val.GetType();
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public);
             StringBuilder sb = new StringBuilder();
             foreach (var field in fields)
