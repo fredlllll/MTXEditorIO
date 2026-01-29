@@ -34,6 +34,7 @@ namespace MTXEditorIO.Raw.SkaPC
 
             //what follows seems to be a header and then keyframe data. each keyframe has a small header itself and then data
             //right now i cant quickly make sense of this without spending a lot of time on it, so i will leave this as a TODO
+            //this might have the code to read ska files https://github.com/aap/librw/blob/master/src/anim.cpp#L121
         }
 
         public void WriteTo(Stream stream)

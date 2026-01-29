@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MTXEditorIO.Util;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,18 +9,18 @@ namespace MTXEditorIO.Raw.TexPC
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TexPCImgHeader
     {
-        public uint sum;
+        public uint checksum;
         public uint width;
         public uint height;
         public uint levels;
-        public uint unknown1;
-        public uint unknown2;
-        public uint dxt;
-        public uint unknown3;
+        public uint texelDepth;
+        public uint palDepth;
+        public uint dxtVersion;
+        public uint palSize;
 
         public override string ToString()
         {
-            return $"TexPCImgHeader: sum={sum}, width={width}, height={height}, levels={levels}, dxt={dxt}, unknown1={unknown1}, unknown2={unknown2}, unknown3={unknown3}";
+            return Output.ToString(this);
         }
     }
 }

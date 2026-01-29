@@ -52,7 +52,7 @@ namespace ToTex
                 var texImage = tex.images[i] = new TexPCImg();
                 texImage.header.width = (uint)width;
                 texImage.header.height = (uint)height;
-                texImage.header.dxt = 1;
+                texImage.header.dxtVersion = 1;
                 texImage.header.levels = (uint)texData.Length;
                 texImage.levels = new TexPCImgLevel[texData.Length];
                 for(int j = 0; j< texData.Length; j++)

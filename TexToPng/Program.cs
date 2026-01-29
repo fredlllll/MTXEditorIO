@@ -38,7 +38,7 @@ namespace TexToPng
                     var layer = img.levels[i];
 
                     ColorRgba32[] colors;
-                    switch (img.header.dxt)
+                    switch (img.header.dxtVersion)
                     {
                         case 1:
                             colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc1);
@@ -50,7 +50,7 @@ namespace TexToPng
                             colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc3);
                             break;
                         default:
-                            throw new Exception($"Unsupported DXT format: {img.header.dxt}");
+                            throw new Exception($"Unsupported DXT format: {img.header.dxtVersion}");
                     }
 
                     using Image<Rgba32> image = new Image<Rgba32>((int)width, (int)height);

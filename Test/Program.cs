@@ -22,7 +22,7 @@ namespace Test
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
-            string folder = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data";
+            /*string folder = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data";
             foreach (var file in Directory.GetFiles(folder, "*zqb", SearchOption.AllDirectories))
             {
                 using var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -37,17 +37,45 @@ namespace Test
                     continue;
                 }
                 Console.WriteLine($"Read ZQB: {file}, chunks: {zqb.Chunks.Length}");
-            }
+            }*/
 
 
-            //string inputFile = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data\\levels\\Atlanta\\Atlanta_scriptsZqb";
+            string skinFile = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data\\models\\Riders\\Milsaps\\MilsapsZskin";
+            string texFile = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data\\models\\Riders\\Milsaps\\MilsapsZtex";
             //string fileNameNoExt = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + "_dir");
 
-            /*using var fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var fileSize = fs.Length;
+            var scn = new ScnTHUG1();
+            {
+                using var fs = new FileStream(skinFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                scn.ReadFrom(fs);
+            }
+            var tex = new TexPC();
+            {
+                using var fs = new FileStream(texFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                tex.ReadFrom(fs);
+            }
+            Dictionary<uint, TexPCImg> textureByChecksum = new Dictionary<uint, TexPCImg>();
+            foreach (var t in tex.images)
+            {
+                textureByChecksum[t.header.checksum] = t;
+                Console.WriteLine($"tex checksum: {t.header.checksum:X8}");
+            }
 
-            var zqb = new Zqb();
-            zqb.ReadFrom(fs);*/
+            foreach (var mat in scn.materials)
+            {
+                Console.WriteLine($"mat checksum: {mat.header.fixedHeader.checksum:X8} name checksum: {mat.header.fixedHeader.materialNameChecksum:X8}");
+                foreach (var pass in mat.passes)
+                {
+                    Console.WriteLine($"pass checksum: {pass.header.checksum:X8}");
+                }
+            }
+
+            foreach(var sec in scn.sectors)
+            {
+                foreach (var mesh in sec.meshes) {
+                    Console.WriteLine($"mesh mat checksum: {mesh.header.materialChecksum:X8}");
+                }
+            }
 
             /*var col = new Col();
             col.ReadFrom(fs);

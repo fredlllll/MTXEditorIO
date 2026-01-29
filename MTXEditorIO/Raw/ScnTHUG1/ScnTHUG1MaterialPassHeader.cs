@@ -67,7 +67,7 @@ namespace MTXEditorIO.Raw.ScnTHUG1
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ScnTHUG1MaterialPassHeader
     {
-        public uint checksum;
+        public uint checksum; //this is used to find the texture in the tex file
         public MaterialPassHeaderFlags flags;
         public OneByteBoolean hasColor;
         public Vec3 passColor;
