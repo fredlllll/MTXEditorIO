@@ -15,6 +15,20 @@ namespace TexEditor
     {
         static readonly BcDecoder decoder = new BcDecoder();
         static readonly BcEncoder encoder = new BcEncoder();
+
+        public static bool NeedsDXT5(ColorRgba32[] colors)
+        {
+            for (int i = 0; i < colors.Length; ++i)
+            {
+                var a = colors[i].a;
+                if (a != 0 && a != 255)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static Image GetImageFromTexImg(TexPCImg img)
         {
             uint width = img.header.width;
@@ -37,13 +51,13 @@ namespace TexEditor
                     throw new Exception($"Unsupported DXT format: {img.header.dxtVersion}");
             }
 
-            var image = new Bitmap((int)width, (int)height);
+            var image = new Bitmap((int)width, (int)height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
                     var color = colors[y * (int)width + x];
-                    image.SetPixel(x, y, System.Drawing.Color.FromArgb(color.a, color.r, color.g, color.b));
+                    image.SetPixel(x, y, Color.FromArgb(color.a, color.r, color.g, color.b));
                 }
             }
             return image;
@@ -58,9 +72,7 @@ namespace TexEditor
             texImg.header.height = height;
             texImg.header.texelDepth = 32;
             texImg.header.palDepth = 0;
-            texImg.header.dxtVersion = 5; //dxt1 for when only 1 bit alpha needed, else dxt5 (but i dont want to check so i just use dxt5 all the time)
             texImg.header.palSize = 0;
-
 
             var colors = new ColorRgba32[width * height];
             for (int y = 0; y < height; y++)
@@ -71,9 +83,22 @@ namespace TexEditor
                     colors[y * (int)width + x] = new ColorRgba32(sourceColor.R, sourceColor.G, sourceColor.B, sourceColor.A);
                 }
             }
+            bool needsDxt5 = NeedsDXT5(colors);
+            if (needsDxt5)
+            {
+                texImg.header.dxtVersion = 5;
+                encoder.OutputOptions.Format = CompressionFormat.Bc3; //dxt5
+            }
+            else
+            {
+                texImg.header.dxtVersion = 1;
+                //TODO: find out if the game can stomach this or if we need a different dxt1 variant
+                encoder.OutputOptions.Format = CompressionFormat.Bc1WithAlpha; //dxt1
+            }
 
             var readOnlyMem = new ReadOnlyMemory2D<ColorRgba32>(colors, (int)height, (int)width);
-            encoder.OutputOptions.Format = CompressionFormat.Bc3; //dxt5
+            
+            
             var texData = encoder.EncodeToRawBytes(readOnlyMem);
 
             texImg.header.levels = (uint)texData.Length;

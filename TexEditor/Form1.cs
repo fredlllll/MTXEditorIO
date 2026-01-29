@@ -5,7 +5,7 @@ namespace TexEditor
 {
     public partial class Form1 : Form
     {
-        const int rowHeight = 164;
+        const int rowHeight = 225;
         private readonly List<TextureView> currentTextureViews = new List<TextureView>();
         private string lastLoadedPath = string.Empty;
 
@@ -60,7 +60,7 @@ namespace TexEditor
             foreach (var img in tex.images)
             {
                 var textureView = new TextureView();
-                textureView.bottomLabel.Text = img.header.checksum.ToString("X8", CultureInfo.InvariantCulture);
+                textureView.txtName.Text = img.header.checksum.ToString("X8", CultureInfo.InvariantCulture);
                 textureView.pictureBox.Image = ImageConversion.GetImageFromTexImg(img);
                 tableLayoutPanel1.Controls.Add(textureView);
                 currentTextureViews.Add(textureView);
@@ -79,6 +79,7 @@ namespace TexEditor
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 SaveTex(sfd.FileName);
+                MessageBox.Show("File saved successfully!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -90,8 +91,15 @@ namespace TexEditor
             {
                 var tv = currentTextureViews[i];
                 var img = tex.images[i] = ImageConversion.GetTexImgFromImage((Bitmap)tv.pictureBox.Image);
-                img.header.checksum = uint.Parse(tv.bottomLabel.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                tex.images = tex.images.Append(img).ToArray();
+                try
+                {
+                    img.header.checksum = uint.Parse(tv.txtName.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException)
+                {
+                    MessageBox.Show($"Invalid checksum format for texture {tv.txtName.Text}, try a 32 bit hex", "Checksum format wrong", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
             using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
             tex.WriteTo(fs);

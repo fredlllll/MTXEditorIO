@@ -25,7 +25,7 @@ namespace TexEditor
             }
         }
 
-        private void replaceTextureToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ReplaceTextureToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog();
             ofd.Filter = "PNG Files|*.png|All Files|*.*";
@@ -37,11 +37,11 @@ namespace TexEditor
             }
         }
 
-        private void saveTextureToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveTextureToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var sfd = new SaveFileDialog();
             sfd.Filter = "PNG Files|*.png|All Files|*.*";
-            sfd.FileName = bottomLabel.Text + ".png";
+            sfd.FileName = txtName.Text + ".png";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 pictureBox.Image.Save(sfd.FileName);
