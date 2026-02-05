@@ -61,7 +61,8 @@ namespace TexToPng
                             Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < pixelRow.Length; x++)
                             {
-                                var color = colors[y * (int)width + x];
+                                //flip vertically while copying
+                                var color = colors[(height - y - 1) * (int)width + x];
                                 pixelRow[x] = new Rgba32(color.r, color.g, color.b, color.a);
                             }
                         }

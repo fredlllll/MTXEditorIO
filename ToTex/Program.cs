@@ -41,7 +41,8 @@ namespace ToTex
                         for (int x = 0; x < pixelRow.Length; x++)
                         {
                             var sourceColor = pixelRow[x];
-                            colors[y * (int)width + x] = new ColorRgba32(sourceColor.R, sourceColor.G, sourceColor.B, sourceColor.A);
+                            // Flip vertically while copying
+                            colors[(height - y - 1) * (int)width + x] = new ColorRgba32(sourceColor.R, sourceColor.G, sourceColor.B, sourceColor.A);
                         }
                     }
                 });
@@ -55,7 +56,7 @@ namespace ToTex
                 texImage.header.dxtVersion = 1;
                 texImage.header.levels = (uint)texData.Length;
                 texImage.levels = new TexPCImgLevel[texData.Length];
-                for(int j = 0; j< texData.Length; j++)
+                for (int j = 0; j < texData.Length; j++)
                 {
                     var level = texImage.levels[j] = new TexPCImgLevel();
                     level.data = texData[j];

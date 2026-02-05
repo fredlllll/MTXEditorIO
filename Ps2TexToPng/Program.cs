@@ -48,7 +48,8 @@ namespace Ps2TexToPng
                         Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
                         for (int x = 0; x < pixelRow.Length; x++)
                         {
-                            var color = imageColors[y * (int)width + x];
+                            //flip vertically while copying
+                            var color = imageColors[(height - y - 1) * (int)width + x];
                             pixelRow[x] = new Rgba32(color.r, color.g, color.b, color.a);
                         }
                     }

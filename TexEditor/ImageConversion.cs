@@ -56,7 +56,7 @@ namespace TexEditor
             {
                 for (int x = 0; x < width; x++)
                 {
-                    var color = colors[y * (int)width + x];
+                    var color = colors[(height - y - 1) * (int)width + x]; //tex images are flipped vertically
                     image.SetPixel(x, y, Color.FromArgb(color.a, color.r, color.g, color.b));
                 }
             }
@@ -80,7 +80,8 @@ namespace TexEditor
                 for (int x = 0; x < width; x++)
                 {
                     var sourceColor = img.GetPixel(x, y);
-                    colors[y * (int)width + x] = new ColorRgba32(sourceColor.R, sourceColor.G, sourceColor.B, sourceColor.A);
+                    //tex images are flipped vertically
+                    colors[(height - y - 1) * (int)width + x] = new ColorRgba32(sourceColor.R, sourceColor.G, sourceColor.B, sourceColor.A);
                 }
             }
             bool needsDxt5 = NeedsDXT5(colors);
@@ -97,8 +98,8 @@ namespace TexEditor
             }
 
             var readOnlyMem = new ReadOnlyMemory2D<ColorRgba32>(colors, (int)height, (int)width);
-            
-            
+
+
             var texData = encoder.EncodeToRawBytes(readOnlyMem);
 
             texImg.header.levels = (uint)texData.Length;
