@@ -17,6 +17,7 @@ namespace ToTex
 
         static void Main(CommandLineArgs args)
         {
+            var r = new Random();
             string[] inputFiles = args.InputFiles.ToArray();
 
             TexPC tex = new TexPC();
@@ -49,13 +50,14 @@ namespace ToTex
 
                 var readOnlyMem = new ReadOnlyMemory2D<ColorRgba32>(colors, height, width);
                 var texData = encoder.EncodeToRawBytes(readOnlyMem); //creates all mipmaps encoded in dxt1
-
+                
                 var texImage = tex.images[i] = new TexPCImg();
                 texImage.header.width = (uint)width;
                 texImage.header.height = (uint)height;
                 texImage.header.dxtVersion = 1;
                 texImage.header.levels = (uint)texData.Length;
                 texImage.levels = new TexPCImgLevel[texData.Length];
+                texImage.header.checksum = (uint)r.Next(); //TODO: just a random checksum right now so you at least have an id to use
                 for (int j = 0; j < texData.Length; j++)
                 {
                     var level = texImage.levels[j] = new TexPCImgLevel();
