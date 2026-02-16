@@ -12,6 +12,11 @@ namespace TexEditor
         public Form1()
         {
             InitializeComponent();
+
+            if (Program.args.Length > 0 && File.Exists(Program.args[0]))
+            {
+                LoadTex(Program.args[0]);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -62,14 +67,13 @@ namespace TexEditor
                 var textureView = new TextureView();
                 textureView.txtName.Text = img.header.checksum.ToString("X8", CultureInfo.InvariantCulture);
                 textureView.pictureBox.Image = ImageConversion.GetImageFromTexImg(img);
+                textureView.originalEncoding = img.header.dxtVersion;
                 tableLayoutPanel1.Controls.Add(textureView);
                 currentTextureViews.Add(textureView);
             }
             tableLayoutPanel1.Height = tableLayoutPanel1.PreferredSize.Height;
             lastLoadedPath = path;
         }
-
-
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -90,7 +94,7 @@ namespace TexEditor
             for (int i = 0; i < tex.images.Length; i++)
             {
                 var tv = currentTextureViews[i];
-                var img = tex.images[i] = ImageConversion.GetTexImgFromImage((Bitmap)tv.pictureBox.Image);
+                var img = tex.images[i] = ImageConversion.GetTexImgFromImage((Bitmap)tv.pictureBox.Image, tv.originalEncoding);
                 try
                 {
                     img.header.checksum = uint.Parse(tv.txtName.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture);

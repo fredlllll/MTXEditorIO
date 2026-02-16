@@ -12,6 +12,8 @@ namespace TexEditor
 {
     public partial class TextureView : UserControl
     {
+        public uint originalEncoding = 0;
+
         public TextureView()
         {
             InitializeComponent();

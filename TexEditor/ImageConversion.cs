@@ -3,11 +3,7 @@ using BCnEncoder.Encoder;
 using BCnEncoder.Shared;
 using CommunityToolkit.HighPerformance;
 using MTXEditorIO.Raw.TexPC;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace TexEditor
 {
@@ -38,6 +34,10 @@ namespace TexEditor
             ColorRgba32[] colors;
             switch (img.header.dxtVersion)
             {
+                case 0:
+                    //raw rgba??
+                    colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Rgba);
+                    break;
                 case 1:
                     colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc1);
                     break;
@@ -63,7 +63,21 @@ namespace TexEditor
             return image;
         }
 
-        public static TexPCImg GetTexImgFromImage(Bitmap img)
+        private static ReadOnlyMemory2D<ColorRgba32>[] GenerateMipChain(ReadOnlyMemory2D<ColorRgba32> pixels, ref int numMipMaps)
+        {
+            //because MipMapper is internal for no fucking reason i have to use reflection to get to it
+            var asm = typeof(BCnEncoder.Encoder.BcEncoder).Assembly;
+            var mipMapperType = asm.GetType("BCnEncoder.Shared.MipMapper") ?? throw new Exception("Cant find MipMapper class");
+
+            var method = mipMapperType.GetMethod("GenerateMipChain", BindingFlags.Public | BindingFlags.Static, new[] { typeof(ReadOnlyMemory2D<ColorRgba32>), typeof(int).MakeByRefType() }) ?? throw new Exception("cant find GenerateMipChain method");
+
+            object[] args = new object[] { pixels, 0 };
+            var result = method.Invoke(null, args) ?? throw new Exception("mipmapper returned null");
+            numMipMaps = (int)args[1];
+            return (ReadOnlyMemory2D<ColorRgba32>[])result;
+        }
+
+        public static TexPCImg GetTexImgFromImage(Bitmap img, uint encoding)
         {
             var texImg = new TexPCImg();
             var width = (uint)img.Width;
@@ -84,23 +98,28 @@ namespace TexEditor
                     colors[(height - y - 1) * (int)width + x] = new ColorRgba32(sourceColor.R, sourceColor.G, sourceColor.B, sourceColor.A);
                 }
             }
-            bool needsDxt5 = NeedsDXT5(colors);
-            if (needsDxt5)
-            {
-                texImg.header.dxtVersion = 5;
-                encoder.OutputOptions.Format = CompressionFormat.Bc3; //dxt5
-            }
-            else
-            {
-                texImg.header.dxtVersion = 1;
-                //TODO: find out if the game can stomach this or if we need a different dxt1 variant
-                encoder.OutputOptions.Format = CompressionFormat.Bc1WithAlpha; //dxt1
-            }
-
+            texImg.header.dxtVersion = encoding;
+            byte[][] texData;
             var readOnlyMem = new ReadOnlyMemory2D<ColorRgba32>(colors, (int)height, (int)width);
+            switch (encoding)
+            {
+                case 0:
+                    encoder.OutputOptions.Format = CompressionFormat.Rgba;
+                    break;
+                case 1:
+                    encoder.OutputOptions.Format = CompressionFormat.Bc1;
+                    break;
+                case 2:
+                    encoder.OutputOptions.Format = CompressionFormat.Bc1WithAlpha;
+                    break;
+                case 5:
+                    encoder.OutputOptions.Format = CompressionFormat.Bc3; //dxt5
+                    break;
+                default:
+                    throw new Exception("how did you open this?");
+            }
 
-
-            var texData = encoder.EncodeToRawBytes(readOnlyMem);
+            texData = encoder.EncodeToRawBytes(readOnlyMem);
 
             texImg.header.levels = (uint)texData.Length;
             texImg.levels = new TexPCImgLevel[texData.Length];
