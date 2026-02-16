@@ -33,7 +33,8 @@ namespace TexEditor
             ofd.Filter = "PNG Files|*.png|All Files|*.*";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                var img = Image.FromFile(ofd.FileName);
+                using var fs = File.OpenRead(ofd.FileName);
+                var img = Image.FromStream(fs);
                 pictureBox.Image?.Dispose();
                 pictureBox.Image = img;
             }
