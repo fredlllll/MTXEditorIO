@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class RandomRange : Empty
     {
+        public RandomRange() : base(QbChunkCode.RandomRange) { }
+
+        public override string ToString()
+        {
+            return "randomRange";
+        }
     }
 }

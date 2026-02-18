@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class RoundClose : Empty
     {
+        public RoundClose() : base(QbChunkCode.RoundClose) { }
+
+        public override string ToString()
+        {
+            return ")";
+        }
     }
 }

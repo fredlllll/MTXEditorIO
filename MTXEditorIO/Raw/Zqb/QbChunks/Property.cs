@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Property : Empty
     {
+        public Property() : base(QbChunkCode.Property) { }
+
+        public override string ToString()
+        {
+            return ".";
+        }
     }
 }

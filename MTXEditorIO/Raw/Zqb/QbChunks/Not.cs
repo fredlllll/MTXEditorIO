@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Not : Empty
     {
+        public Not() : base(QbChunkCode.Not) { }
+
+        public override string ToString()
+        {
+            return "not";
+        }
     }
 }

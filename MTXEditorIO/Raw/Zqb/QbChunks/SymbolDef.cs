@@ -8,6 +8,8 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class SymbolDef : BaseChunk
     {
+        public SymbolDef() : base(QbChunkCode.SymbolDef) { }
+
         public uint Value;
         public string Name = string.Empty;
 
@@ -21,6 +23,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
         {
             writer.Write(Value);
             writer.WriteCString(Name);
+        }
+
+        public override string ToString()
+        {
+            return $"def {Name}:={Value}";
         }
     }
 }

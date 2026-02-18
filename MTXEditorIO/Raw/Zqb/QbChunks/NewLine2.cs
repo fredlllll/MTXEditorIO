@@ -1,4 +1,5 @@
-﻿using MTXEditorIO.Util;
+﻿
+using MTXEditorIO.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,8 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class NewLine2 : BaseChunk
     {
+        public NewLine2() : base(QbChunkCode.NewLine2) { }
+
         public int Value;
         public override void ReadFrom(BinaryReader reader)
         {
@@ -17,6 +20,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
         public override void WriteTo(BinaryWriter writer)
         {
             writer.Write(Value);
+        }
+
+        public override string ToString()
+        {
+            return $"({Value})\r\n";
         }
     }
 }

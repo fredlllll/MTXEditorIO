@@ -71,7 +71,7 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
         Case = 0x3E,
         Default = 0x3F,
         RandomNoRepeat = 0x40,
-        //Random41 = 0x41,
+        Random41 = 0x41,
         Member = 0x42,
         //a = 0x43,
         //a = 0x44,

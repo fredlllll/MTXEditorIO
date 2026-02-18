@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Param : String
     {
+        public Param() : base(QbChunkCode.Param) { }
+
+        public override string ToString()
+        {
+            return $"'{Value}'";
+        }
     }
 }

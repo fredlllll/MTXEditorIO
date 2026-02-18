@@ -9,6 +9,10 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
     public class String : BaseChunk
     {
         public string Value = string.Empty;
+
+        public String() : base(QbChunkCode.String) { }
+        protected String(QbChunkCode code) : base(code) { }
+
         public override void ReadFrom(BinaryReader reader)
         {
             int length = reader.ReadInt32();
@@ -20,6 +24,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
             var bytes = StringUtils.GetBytes(Value);
             writer.Write(bytes.Length);
             writer.Write(bytes);
+        }
+
+        public override string ToString()
+        {
+            return $"\"{Value}\"";
         }
     }
 }

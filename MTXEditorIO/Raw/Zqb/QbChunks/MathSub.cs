@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class MathSub : Empty
     {
+        public MathSub() : base(QbChunkCode.MathSub) { }
+
+        public override string ToString()
+        {
+            return "-";
+        }
     }
 }

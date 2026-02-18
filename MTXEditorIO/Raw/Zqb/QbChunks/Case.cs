@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Case : Empty
     {
+        public Case() : base(QbChunkCode.Case) { }
+
+        public override string ToString()
+        {
+            return "case";
+        }
     }
 }

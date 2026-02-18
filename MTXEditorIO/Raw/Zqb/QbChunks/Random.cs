@@ -8,6 +8,10 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Random : BaseChunk
     {
+        public Random() : base(QbChunkCode.Random) { }
+
+        protected Random(QbChunkCode code) : base(code) { }
+
         public int[] pointers = System.Array.Empty<int>();
 
         public override void ReadFrom(BinaryReader reader)
@@ -27,6 +31,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
             {
                 writer.Write(pointers[i]);
             }
+        }
+
+        public override string ToString()
+        {
+            return "random";
         }
     }
 }

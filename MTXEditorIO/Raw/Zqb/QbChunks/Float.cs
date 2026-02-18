@@ -8,6 +8,8 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Float : BaseChunk
     {
+        public Float() : base(QbChunkCode.Float) { }
+
         public float Value;
         public override void ReadFrom(BinaryReader reader)
         {
@@ -17,6 +19,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
         public override void WriteTo(BinaryWriter writer)
         {
             writer.Write(Value);
+        }
+
+        public override string ToString()
+        {
+            return $"{Value}";
         }
     }
 }

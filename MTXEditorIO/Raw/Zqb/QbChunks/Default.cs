@@ -6,5 +6,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Default : Empty
     {
+        public Default() : base(QbChunkCode.Default) { }
+
+        public override string ToString()
+        {
+            return "default";
+        }
     }
 }

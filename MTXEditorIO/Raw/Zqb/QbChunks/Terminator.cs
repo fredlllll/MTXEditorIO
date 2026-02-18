@@ -8,6 +8,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Terminator : Empty
     {
+        public Terminator() : base(QbChunkCode.Terminator) { }
 
+        public override string ToString()
+        {
+            return "HALT";
+        }
     }
 }

@@ -8,6 +8,8 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Else2 : BaseChunk
     {
+        public Else2() : base(QbChunkCode.Else2) { }
+
         public ushort Value;
         public override void ReadFrom(BinaryReader reader)
         {
@@ -17,6 +19,11 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
         public override void WriteTo(BinaryWriter writer)
         {
             writer.Write(Value);
+        }
+
+        public override string ToString()
+        {
+            return $"else2({Value})";
         }
     }
 }

@@ -8,6 +8,10 @@ namespace MTXEditorIO.Raw.Zqb.QbChunks
 {
     public class Empty : BaseChunk
     {
+        public Empty(QbChunkCode chunkCode) : base(chunkCode)
+        {
+        }
+
         public override void ReadFrom(BinaryReader reader)
         {
 
