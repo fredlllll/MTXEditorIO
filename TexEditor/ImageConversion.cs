@@ -31,7 +31,9 @@ namespace TexEditor
             uint height = img.header.height;
             var layer = img.levels[0];
 
+
             ColorRgba32[] colors;
+            //Console.WriteLine($"image {img.header.checksum:X8} has dxt version: {img.header.dxtVersion}");
             switch (img.header.dxtVersion)
             {
                 case 0:
@@ -39,9 +41,11 @@ namespace TexEditor
                     colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Rgba);
                     break;
                 case 1:
-                    colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc1);
+                    //i know this one has alpha for sure because some wheel textures need it for the spokes
+                    colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc1WithAlpha);
                     break;
-                case 2: //a guess in the dark what this means, Bc1 without alpha also works on it, both produce a black image, DXT3/BC2 doesnt work
+                case 2: //a guess in the dark what this means, Bc1 without alpha also works on it, DXT3/BC2 doesnt work
+                    //textures with this DO have meaningful alpha values though
                     colors = decoder.DecodeRaw(layer.data, (int)width, (int)height, CompressionFormat.Bc1WithAlpha);
                     break;
                 case 5:
@@ -107,7 +111,7 @@ namespace TexEditor
                     encoder.OutputOptions.Format = CompressionFormat.Rgba;
                     break;
                 case 1:
-                    encoder.OutputOptions.Format = CompressionFormat.Bc1;
+                    encoder.OutputOptions.Format = CompressionFormat.Bc1WithAlpha;
                     break;
                 case 2:
                     encoder.OutputOptions.Format = CompressionFormat.Bc1WithAlpha;
