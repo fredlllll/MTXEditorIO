@@ -13,7 +13,7 @@ namespace QCompile
 
         static void Main(CommandLineArgs args)
         {
-            if (!args.compile)
+            if (!args.Compile)
             {
                 Decompile(Path.GetFullPath(args.InputFile));
             }

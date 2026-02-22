@@ -11,7 +11,7 @@ namespace QCompile
     public class CommandLineArgs
     {
         [Option("compile", Required = false, Default = false, HelpText = "compile the file")]
-        public bool compile { get; set; }
+        public bool Compile { get; set; }
 
         [Value(0, MetaName = "Input File (Q File or code file)", Required = true, HelpText = "the file that is supposed to be processed")]
         public string InputFile { get; set; } = string.Empty;
