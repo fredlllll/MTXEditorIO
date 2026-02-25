@@ -30,6 +30,7 @@ namespace MTXEditorIO.Raw.Img
         public void WriteTo(Stream stream)
         {
             var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+            header.version = 2;
             header.palSize = (uint)palette.Length;
             header.fileSize = (uint)(Marshal.SizeOf<ImgHeader>() + palette.Length + data.Length);
             writer.WriteStruct(header);

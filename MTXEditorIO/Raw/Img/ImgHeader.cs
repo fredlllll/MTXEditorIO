@@ -8,7 +8,7 @@ namespace MTXEditorIO.Raw.Img
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ImgHeader
     {
-        public uint version;
+        public uint version; //= 2
         public uint fileSize; //?
         public uint notImageWidth;
         public uint notImageHeight;
@@ -16,6 +16,6 @@ namespace MTXEditorIO.Raw.Img
         public uint unknown2;
         public ushort imageWidth;
         public ushort imageHeight;
-        public uint palSize;
+        public uint palSize; //in bytes
     }
 }
