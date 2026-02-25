@@ -1,8 +1,6 @@
 ﻿using MTXEditorIO.Util;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MTXEditorIO.Raw.Img
@@ -10,33 +8,42 @@ namespace MTXEditorIO.Raw.Img
     public class Img : IReadableWriteableFromStream
     {
         public ImgHeader header;
-        public byte[] palette = Array.Empty<byte>();
+        public RGBA8888Color[] palette = Array.Empty<RGBA8888Color>();
         public byte[] data = Array.Empty<byte>();
 
         public void ReadFrom(Stream stream)
         {
             var reader = new BinaryReader(stream, Encoding.ASCII, true);
             header = reader.ReadStruct<ImgHeader>();
-
-            if (header.palSize > 0)
+            int pixelNum = (int)(header.imageDataWidth * header.imageDataHeight);
+            int dataSize = pixelNum * 4;
+            if (header.paletteSize > 0)
             {
                 //always encoded as RGBA8888
-                palette = reader.ReadBytes((int)header.palSize);
+                palette = reader.ReadStructs<RGBA8888Color>((int)header.paletteSize / 4);
+                dataSize = pixelNum;
             }
-            var dataSize = reader.BaseStream.Length - reader.BaseStream.Position;
-            data = reader.ReadBytes((int)dataSize);
+            data = reader.ReadBytes(dataSize);
         }
 
         public void WriteTo(Stream stream)
         {
             var writer = new BinaryWriter(stream, Encoding.ASCII, true);
             header.version = 2;
-            header.palSize = (uint)palette.Length;
-            header.fileSize = (uint)(Marshal.SizeOf<ImgHeader>() + palette.Length + data.Length);
+            header.paletteSize = (uint)palette.Length;
+            header.someFlags = SomeFlags.flag512_____; //512 in many files. idk what it means though
+            if (palette.Length > 0)
+            {
+                header.pixelFormat = TexPS2.PixelFormat.Indexed8;
+            }
+            else
+            {
+                header.pixelFormat = TexPS2.PixelFormat.RGBA8888;
+            }
             writer.WriteStruct(header);
             if (palette.Length > 0)
             {
-                writer.Write(palette);
+                writer.WriteStructs(palette);
             }
             writer.Write(data);
         }

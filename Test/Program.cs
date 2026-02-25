@@ -2,6 +2,7 @@
 using BCnEncoder.Shared;
 using CSWavefront.Raw;
 using MTXEditorIO.Raw.Col;
+using MTXEditorIO.Raw.Img;
 using MTXEditorIO.Raw.Pre;
 using MTXEditorIO.Raw.ScnTHUG1;
 using MTXEditorIO.Raw.TexPC;
@@ -22,60 +23,23 @@ namespace Test
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
-            /*string folder = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data";
-            foreach (var file in Directory.GetFiles(folder, "*zqb", SearchOption.AllDirectories))
+            string folder = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data\\images";
+            foreach (var file in Directory.GetFiles(folder, "*Zimg", SearchOption.AllDirectories))
             {
                 using var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                var zqb = new Zqb();
+                var img = new Img();
                 try
                 {
-                    zqb.ReadFrom(fs);
+                    img.ReadFrom(fs);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error reading ZQB: {file}, ex: {ex}");
                     continue;
                 }
-                Console.WriteLine($"Read ZQB: {file}, chunks: {zqb.Chunks.Length}");
-            }*/
-
-
-            string skinFile = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data\\models\\Riders\\Milsaps\\MilsapsZskin";
-            string texFile = "I:\\Projects\\MTX Mototrax PRO Modding\\MTX Mototrax PRO\\data\\models\\Riders\\Milsaps\\MilsapsZtex";
-            //string fileNameNoExt = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + "_dir");
-
-            var scn = new ScnTHUG1();
-            {
-                using var fs = new FileStream(skinFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                scn.ReadFrom(fs);
-            }
-            var tex = new TexPC();
-            {
-                using var fs = new FileStream(texFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                tex.ReadFrom(fs);
-            }
-            Dictionary<uint, TexPCImg> textureByChecksum = new Dictionary<uint, TexPCImg>();
-            foreach (var t in tex.images)
-            {
-                textureByChecksum[t.header.checksum] = t;
-                Console.WriteLine($"tex checksum: {t.header.checksum:X8}");
+                Console.WriteLine($"{img.header} {Path.GetRelativePath(folder,file)}");
             }
 
-            foreach (var mat in scn.materials)
-            {
-                Console.WriteLine($"mat checksum: {mat.header.fixedHeader.checksum:X8} name checksum: {mat.header.fixedHeader.materialNameChecksum:X8}");
-                foreach (var pass in mat.passes)
-                {
-                    Console.WriteLine($"pass checksum: {pass.header.checksum:X8}");
-                }
-            }
-
-            foreach(var sec in scn.sectors)
-            {
-                foreach (var mesh in sec.meshes) {
-                    Console.WriteLine($"mesh mat checksum: {mesh.header.materialChecksum:X8}");
-                }
-            }
 
             /*var col = new Col();
             col.ReadFrom(fs);

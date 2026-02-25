@@ -2,8 +2,6 @@
 using MTXEditorIO.Raw.Img;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using System.Net;
-using System.Text;
 
 namespace ImgToPng
 {
@@ -24,32 +22,37 @@ namespace ImgToPng
             var img = new Img();
             img.ReadFrom(fs);
             Console.WriteLine($"Done reading, trailing bytes: {fs.Length - fs.Position}");
-            ushort width = img.header.imageWidth;
-            ushort height = img.header.imageHeight;
+
+            int width = (int)img.header.imageDataWidth;
+            int height = (int)img.header.imageDataHeight;
             Rgba32[] colors = new Rgba32[width * height];
 
-            if (img.palette.Length > 0)
+            switch (img.header.pixelFormat)
             {
-                var pal = img.palette;
-                Rgba32[] palette = new Rgba32[img.palette.Length / 4];
-                for (int i = 0; i < palette.Length; i++)
-                {
-                    var palDataIndex = i * 4;
-                    palette[i] = new Rgba32(pal[palDataIndex], pal[palDataIndex + 1], pal[palDataIndex + 2], pal[palDataIndex + 3]);
-                }
-                for (int i = 0; i < colors.Length; i++)
-                {
-                    colors[i] = palette[img.data[i]];
-                }
-            }
-            else
-            {
-                var dat = img.data;
-                for (int i = 0; i < colors.Length; i++)
-                {
-                    var dataIndex = i * 4;
-                    colors[i] = new Rgba32(dat[dataIndex], dat[dataIndex + 1], dat[dataIndex + 2], dat[dataIndex + 3]);
-                }
+                case MTXEditorIO.Raw.TexPS2.PixelFormat.RGBA8888:
+                    var dat = img.data;
+                    for (int i = 0; i < colors.Length; i++)
+                    {
+                        var dataIndex = i * 4;
+                        colors[i] = new Rgba32(dat[dataIndex], dat[dataIndex + 1], dat[dataIndex + 2], dat[dataIndex + 3]);
+                    }
+                    break;
+                case MTXEditorIO.Raw.TexPS2.PixelFormat.Indexed8:
+                    var pal = img.palette;
+                    Rgba32[] palette = new Rgba32[img.palette.Length];
+                    for (int i = 0; i < palette.Length; i++)
+                    {
+                        var palColor = img.palette[i];
+
+                        palette[i] = new Rgba32(palColor.r, palColor.g, palColor.b, palColor.a);
+                    }
+                    for (int i = 0; i < colors.Length; i++)
+                    {
+                        colors[i] = palette[img.data[i]];
+                    }
+                    break;
+                default:
+                    throw new NotImplementedException("unsupported format: " + img.header.pixelFormat);
             }
 
             using Image<Rgba32> image = new Image<Rgba32>(width, height);

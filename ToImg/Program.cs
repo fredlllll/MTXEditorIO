@@ -17,12 +17,7 @@ namespace ToImg
             string inputFile = Path.GetFullPath(args.InputFile);
             string outputFile = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + ".img");
 
-            if (args.UsePalette)
-            {
-                throw new NotImplementedException("palette creation is not implemented yet");
-            }
-
-            using var sourceImage = Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(inputFile);
+            using var sourceImage = Image.Load<Rgba32>(inputFile);
 
             int width = sourceImage.Width;
             int height = sourceImage.Height;
@@ -43,18 +38,41 @@ namespace ToImg
 
 
             var img = new Img();
-            img.header.version = 2;
-            img.header.imageWidth = (ushort)width;
-            img.header.imageHeight = (ushort)height;
-            img.data = new byte[colors.Length * 4];
-            for (int i = 0; i < colors.Length; i++)
+            img.header.SetWidth(width);
+            img.header.SetHeight(height);
+            if (args.UsePalette)
             {
-                int datIndex = i * 4;
-                var c = colors[i];
-                img.data[datIndex] = c.R;
-                img.data[datIndex + 1] = c.G;
-                img.data[datIndex + 2] = c.B;
-                img.data[datIndex + 3] = c.A;
+                //only rgba8888 in palette, indices in data
+                var palette = colors.Distinct().ToList(); //list so we get an IndexOf function we need later
+                if (palette.Count > 256)
+                {
+                    throw new NotSupportedException("Image has more than 256 distinct colors, can not fit in palette");
+                }
+                img.palette = new RGBA8888Color[palette.Count];
+                for (int i = 0; i < palette.Count; i++)
+                {
+                    var c = palette[i];
+                    img.palette[i] = new RGBA8888Color() { r = c.R, g = c.G, b = c.B, a = c.A };
+                }
+                img.data = new byte[colors.Length];
+                for (int i = 0; i < colors.Length; ++i)
+                {
+                    img.data[i] = (byte)palette.IndexOf(colors[i]);
+                }
+            }
+            else
+            {
+                //raw rgba8888
+                img.data = new byte[colors.Length * 4];
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    int datIndex = i * 4;
+                    var c = colors[i];
+                    img.data[datIndex] = c.R;
+                    img.data[datIndex + 1] = c.G;
+                    img.data[datIndex + 2] = c.B;
+                    img.data[datIndex + 3] = c.A;
+                }
             }
 
             using var fs = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
