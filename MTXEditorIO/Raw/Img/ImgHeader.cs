@@ -12,6 +12,12 @@ namespace MTXEditorIO.Raw.Img
         public byte a;
     }
 
+    public enum ImgPixelFormat : uint
+    {
+        BGRA8888 = 0,
+        Indexed8 = 19,
+    }
+
     public enum SomeFlags:uint
     {
         //no idea what these values mean, but these are the only two values i found for this field
@@ -34,7 +40,7 @@ namespace MTXEditorIO.Raw.Img
         public SomeFlags someFlags;
         public uint imageDataWidth;
         public uint imageDataHeight;
-        public PixelFormat pixelFormat;
+        public ImgPixelFormat pixelFormat;
         public UnknownFlags unknownFlags;
         public ushort imageWidth;
         public ushort imageHeight;

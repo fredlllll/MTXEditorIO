@@ -21,23 +21,24 @@ namespace ImgToPng
 
             var img = new Img();
             img.ReadFrom(fs);
-            Console.WriteLine($"Done reading, trailing bytes: {fs.Length - fs.Position}");
 
             int width = (int)img.header.imageDataWidth;
             int height = (int)img.header.imageDataHeight;
             Rgba32[] colors = new Rgba32[width * height];
 
+            Console.WriteLine("Image format: " + img.header.pixelFormat);
+
             switch (img.header.pixelFormat)
             {
-                case MTXEditorIO.Raw.TexPS2.PixelFormat.RGBA8888:
+                case ImgPixelFormat.BGRA8888:
                     var dat = img.data;
                     for (int i = 0; i < colors.Length; i++)
                     {
                         var dataIndex = i * 4;
-                        colors[i] = new Rgba32(dat[dataIndex], dat[dataIndex + 1], dat[dataIndex + 2], dat[dataIndex + 3]);
+                        colors[i] = new Rgba32(dat[dataIndex+2], dat[dataIndex + 1], dat[dataIndex], dat[dataIndex + 3]);
                     }
                     break;
-                case MTXEditorIO.Raw.TexPS2.PixelFormat.Indexed8:
+                case ImgPixelFormat.Indexed8:
                     var pal = img.palette;
                     Rgba32[] palette = new Rgba32[img.palette.Length];
                     for (int i = 0; i < palette.Length; i++)

@@ -68,9 +68,9 @@ namespace ToImg
                 {
                     int datIndex = i * 4;
                     var c = colors[i];
-                    img.data[datIndex] = c.R;
+                    img.data[datIndex] = c.B;
                     img.data[datIndex + 1] = c.G;
-                    img.data[datIndex + 2] = c.B;
+                    img.data[datIndex + 2] = c.R;
                     img.data[datIndex + 3] = c.A;
                 }
             }

@@ -34,11 +34,11 @@ namespace MTXEditorIO.Raw.Img
             header.someFlags = SomeFlags.flag512_____; //512 in many files. idk what it means though
             if (palette.Length > 0)
             {
-                header.pixelFormat = TexPS2.PixelFormat.Indexed8;
+                header.pixelFormat = ImgPixelFormat.Indexed8;
             }
             else
             {
-                header.pixelFormat = TexPS2.PixelFormat.RGBA8888;
+                header.pixelFormat = ImgPixelFormat.BGRA8888;
             }
             writer.WriteStruct(header);
             if (palette.Length > 0)
