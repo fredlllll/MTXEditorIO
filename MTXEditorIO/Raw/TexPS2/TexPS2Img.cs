@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace MTXEditorIO.Raw.TexPS2
@@ -10,7 +11,7 @@ namespace MTXEditorIO.Raw.TexPS2
     {
         public readonly bool isFirstImage;
 
-        public ITexPS2ImgHeader header = new TexPS2ImgHeader();
+        public TexPS2ImgHeader header = new TexPS2ImgHeader();
         public byte[] palette = Array.Empty<byte>();
         public byte[] imageData = Array.Empty<byte>();
         public byte[][] mipMaps = Array.Empty<byte[]>();
@@ -22,44 +23,21 @@ namespace MTXEditorIO.Raw.TexPS2
 
         public void ReadFrom(BinaryReader reader)
         {
-            uint id = reader.ReadUInt32();
-            if (!isFirstImage && id != 0)
-            {
-                //the first uint of all image headers has so far been 0
-                //the CR125 file has a random structure in the file (appearing after image 27):
-                // F5 1D 19 16 00 00 00 00 00 80 BB 44 02 00 00 00
-                //structure doesnt begin with 0, so at least that sets it apart from image headers.
-                //skip these 16 bytes (12 cause we already read 4)
-                reader.ReadBytes(12);
-            }
-            else
-            {
-                //unread
-                reader.BaseStream.Position -= 4;
-            }
-
             //for some reason the first header is formatted differently
             long headerPos = reader.BaseStream.Position;
-            if (isFirstImage)
-            {
-                header = reader.ReadStruct<TexPS2FirstImgHeader>();
-            }
-            else
-            {
-                header = reader.ReadStruct<TexPS2ImgHeader>();
-            }
+            header.ReadFrom(reader);
             Console.WriteLine(header);
 
-            int width = 1 << (int)header.WidthPowOfTwo;
-            int height = 1 << (int)header.HeightPowOfTwo;
-            if (width > 512 || height > 512) //dont think the game can do anything above 512, so in case we read garbage exit early
+            int width = 1 << (int)header.widthPowOfTwo;
+            int height = 1 << (int)header.heightPowOfTwo;
+            if (width > 2048 || height > 2048) //dont think the game can do anything above 512, so in case we read garbage exit early
             {
                 throw new Exception($"Image too large: {width}*{height}, header at {headerPos}");
             }
             int paletteItemCount = 0;
             int paletteItemSize = 0;
             int dataSize = 0;
-            switch (header.Format)
+            switch (header.format)
             {
                 case PixelFormat.Indexed4:
                     paletteItemCount = 16; // 16 colors
@@ -76,9 +54,9 @@ namespace MTXEditorIO.Raw.TexPS2
                     dataSize = width * height * 4; //32 bits per pixel
                     break;
                 default:
-                    throw new Exception($"Unsupported texture format: {header.Format}, header at {headerPos}");
+                    throw new Exception($"Unsupported texture format: {header.format}, header at {headerPos}");
             }
-            switch (header.PaletteFormat)
+            switch (header.paletteFormat)
             {
                 case PixelFormat.ABGR1555:
                     paletteItemSize = 2;
@@ -87,15 +65,19 @@ namespace MTXEditorIO.Raw.TexPS2
                     paletteItemSize = 4;
                     break;
                 default:
-                    throw new Exception($"Unsupported palette format: {header.PaletteFormat}, header at {headerPos}");
+                    throw new Exception($"Unsupported palette format: {header.paletteFormat}, header at {headerPos}");
             }
-            palette = reader.ReadBytes(paletteItemCount * paletteItemSize);
-            imageData = reader.ReadBytes(dataSize);
-            mipMaps = new byte[header.MipMapLevels][];
-            for (int i = 0; i < header.MipMapLevels; ++i)
+            if (header.noDataIfNotZero == 0)
             {
-                dataSize /= 4;
-                mipMaps[i] = reader.ReadBytes(dataSize);
+                reader.BaseStream.Position = (reader.BaseStream.Position + 15) & ~15;//T align stream to next 16 bytes
+                palette = reader.ReadBytes(paletteItemCount * paletteItemSize);
+                imageData = reader.ReadBytes(dataSize);
+                mipMaps = new byte[header.mipMapLevels][];
+                for (int i = 0; i < header.mipMapLevels; ++i)
+                {
+                    dataSize /= 4;
+                    mipMaps[i] = reader.ReadBytes(dataSize);
+                }
             }
         }
 

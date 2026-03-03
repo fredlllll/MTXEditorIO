@@ -38,6 +38,11 @@ namespace Ps2TexToPng
                 */
 
                 var imageColors = ImageConversion.GetImageColors(img);
+                if (imageColors.Length == 0)
+                {
+                    Console.WriteLine($"Image {i} has no data, skipping");
+                    continue;
+                }
 
 
                 using Image<Rgba32> image = new Image<Rgba32>((int)width, (int)height);

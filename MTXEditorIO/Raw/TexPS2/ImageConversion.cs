@@ -9,11 +9,11 @@ namespace MTXEditorIO.Raw.TexPS2
         public static (byte r, byte g, byte b, byte a)[] GetImageColors(TexPS2Img image)
         {
             (byte r, byte g, byte b, byte a)[] outputColors;
-            if (IsIndexedPixelFormat(image.header.Format))
+            if (IsIndexedPixelFormat(image.header.format))
             {
-                var palette = ParsePalette(image.palette, image.header.PaletteFormat);
+                var palette = ParsePalette(image.palette, image.header.paletteFormat);
                 byte[] indices = image.imageData;
-                if (image.header.Format == PixelFormat.Indexed4)
+                if (image.header.format == PixelFormat.Indexed4)
                 {
                     indices = _4To8BitIndices(image.imageData);
                 }
@@ -26,7 +26,7 @@ namespace MTXEditorIO.Raw.TexPS2
             }
             else
             {
-                outputColors = ParsePalette(image.imageData, image.header.Format);
+                outputColors = ParsePalette(image.imageData, image.header.format);
             }
             return outputColors;
         }
