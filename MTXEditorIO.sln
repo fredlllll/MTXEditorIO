@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImgToPng", "ImgToPng\ImgToP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToImg", "ToImg\ToImg.csproj", "{9AD059E2-D36D-4DCC-AED1-971003A41E68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeomToScn", "GeomToScn\GeomToScn.csproj", "{4C6D3F7A-2E43-4C51-9D8F-B17A53C9E2F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{9AD059E2-D36D-4DCC-AED1-971003A41E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AD059E2-D36D-4DCC-AED1-971003A41E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AD059E2-D36D-4DCC-AED1-971003A41E68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C6D3F7A-2E43-4C51-9D8F-B17A53C9E2F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C6D3F7A-2E43-4C51-9D8F-B17A53C9E2F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C6D3F7A-2E43-4C51-9D8F-B17A53C9E2F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C6D3F7A-2E43-4C51-9D8F-B17A53C9E2F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
