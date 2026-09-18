@@ -30,9 +30,7 @@ namespace MTXEditorIO.Raw.Col
             //faces
             reader.BaseStream.Position = offsets.baseFaceOffset + header.firstFaceOffset;
             ReadFaces(reader);
-            //bsp tree
-            reader.BaseStream.Position = offsets.baseBSPOffset + header.bspTreeHeadOffset;
-            ReadBSP(reader);
+            //bsp tree is resolved per-file in Col.ReadFrom (needs the global face-index pool)
         }
 
         public void ReadVerts(BinaryReader reader)
@@ -74,8 +72,8 @@ namespace MTXEditorIO.Raw.Col
 
         public void ReadBSP(BinaryReader reader)
         {
-            //bspTree = new ColBSPTree();
-            //bspTree.ReadFrom(reader);
+            // BSP trees are resolved once per file in Col.ReadFrom (node counts span
+            // object boundaries and feed the shared face-index pool reader).
         }
 
         public void WriteDummyHeader(BinaryWriter writer, ColOffsets offsets)
@@ -85,8 +83,15 @@ namespace MTXEditorIO.Raw.Col
                 //adjust some header values we can know now
                 header.numVerts = (ushort)vertices.Length;
                 header.numFaces = (ushort)faces.Length;
-                header.useSmallFaces = faces.First() is ColSmallFace;
-                header.useSmallVerts = vertices.First() is ColSmallVertex;
+                if (faces.Length > 0) header.useSmallFaces = faces.First() is ColSmallFace;
+                if (vertices.Length > 0) header.useSmallVerts = vertices.First() is ColSmallVertex;
+            }
+            if (vertices.Length == 0)
+            {
+                //keep the parsed bounding box for empty objects
+                headerOffset = writer.BaseStream.Position;
+                writer.WriteStruct(header);
+                return;
             }
             //calculate bounding box
             Vec4 bbMin = new Vec4() { x = float.MaxValue, y = float.MaxValue, z = float.MaxValue, w = 1 };
@@ -163,7 +168,7 @@ namespace MTXEditorIO.Raw.Col
             {
                 header.bspTreeHeadOffset = (uint)(writer.BaseStream.Position - offsets.baseBSPOffset);
             }
-            //TODO
+            bspTree.WriteTo(writer);
         }
 
         internal void WriteFinalHeader(BinaryWriter writer)

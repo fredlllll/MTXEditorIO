@@ -13,6 +13,7 @@ namespace MTXEditorIO.Raw.Col
     {
         public ColHeader header;
         public ColObject[] objects = Array.Empty<ColObject>();
+        public ushort[] bspFaceIndexPool = Array.Empty<ushort>(); //shared u16 face-index pool, sits right after the last object's node array
 
         public void ReadFrom(Stream stream)
         {
@@ -33,6 +34,45 @@ namespace MTXEditorIO.Raw.Col
             for (int i = 0; i < objects.Length; ++i)
             {
                 objects[i].ReadAllData(reader, offsets);
+            }
+
+            if (objects.Length == 0) return;
+
+            // resolve every object's BSP node array and read the shared face-index pool.
+            // each object's node array fills its span up to the next object's bsp start;
+            // the last one extends to EOF, where the pool lives.
+            long[] bspStarts = new long[objects.Length];
+            for (int i = 0; i < objects.Length; ++i)
+            {
+                bspStarts[i] = offsets.baseBSPOffset + objects[i].header.bspTreeHeadOffset;
+            }
+            long eof = stream.Length;
+
+            for (int i = 0; i < objects.Length; ++i)
+            {
+                long end = i + 1 < objects.Length ? bspStarts[i + 1] : eof;
+                int len = (int)(end - bspStarts[i]);
+                if (len <= 0) continue;
+
+                var block = new byte[len];
+                reader.BaseStream.Position = bspStarts[i];
+                reader.Read(block, 0, len);
+
+                ColBSPTree.Resolve(block, objects[i].header.numFaces, i == objects.Length - 1, out bool prefix, out int count);
+                objects[i].bspTree.Populate(block, prefix ? 4 : 0, count);
+            }
+
+            var lastTree = objects[^1].bspTree;
+            long poolStart = bspStarts[^1] + (lastTree.hasPrefix ? 4 : 0) + (long)lastTree.nodeCount * 8;
+            long poolBytes = eof - poolStart;
+            if (poolBytes > 0)
+            {
+                bspFaceIndexPool = new ushort[poolBytes / 2];
+                reader.BaseStream.Position = poolStart;
+                for (int i = 0; i < bspFaceIndexPool.Length; ++i)
+                {
+                    bspFaceIndexPool[i] = reader.ReadUInt16();
+                }
             }
         }
 
@@ -101,6 +141,11 @@ namespace MTXEditorIO.Raw.Col
             for (int i = 0; i < objects.Length; ++i)
             {
                 objects[i].WriteBSP(writer, offsets);
+            }
+            //write the shared face-index pool (all leaf face lists live here)
+            for (int i = 0; i < bspFaceIndexPool.Length; ++i)
+            {
+                writer.Write(bspFaceIndexPool[i]);
             }
             //write final header cause we now have the offsets set correctly
             for (int i = 0; i < objects.Length; ++i)
