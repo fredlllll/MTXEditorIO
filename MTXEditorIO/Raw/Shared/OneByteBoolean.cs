@@ -18,7 +18,7 @@ namespace MTXEditorIO.Raw.Shared
 
         public static implicit operator OneByteBoolean(bool val)
         {
-            return new OneByteBoolean() { value = val ? byte.MaxValue : byte.MinValue };
+            return new OneByteBoolean() { value = val ? (byte)0x01 : (byte)0x00 };
         }
 
         public override string ToString()
