@@ -19,7 +19,7 @@ namespace Test
 {
     internal static class Program
     {
-        static void Main(string[] args)
+        static void TestReadQB()
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
@@ -37,8 +37,30 @@ namespace Test
                     Console.WriteLine($"Error reading ZQB: {file}, ex: {ex}");
                     continue;
                 }
-                Console.WriteLine($"{img.header} {Path.GetRelativePath(folder,file)}");
+                Console.WriteLine($"{img.header} {Path.GetRelativePath(folder, file)}");
             }
+        }
+
+        static void TestTextureIds()
+        {
+            var folder = "I:\\Projects\\MTX Mototrax PRO Modding\\texture that doesnt work\\buff fat body textures not applied to buff";
+            var texFile = Path.Combine(folder, "UB_fatZtex");
+            var skinFile = Path.Combine(folder, "UB_fatZskin");
+
+            using var fs = new FileStream(texFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var tex = new TexPC();
+            tex.ReadFrom(fs);
+
+            using var fs2 = new FileStream(skinFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var skin = new ScnTHUG1();
+            skin.ReadFrom(fs2);
+
+            Console.WriteLine($"tex: {tex.header}, skin: {skin.header}");
+        }
+
+        static void Main(string[] args)
+        {
+            TestTextureIds();
 
 
             /*var col = new Col();

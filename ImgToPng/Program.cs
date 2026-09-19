@@ -45,18 +45,35 @@ namespace ImgToPng
                     {
                         var palColor = img.palette[i];
 
-                        palette[i] = new Rgba32(palColor.r, palColor.g, palColor.b, palColor.a);
+                        palette[i] = new Rgba32(palColor.b, palColor.g, palColor.r, palColor.a);
                     }
-                    for (int i = 0; i < colors.Length; i++)
+                    Image<Rgba32> image = new Image<Rgba32>(img.header.imageWidth, img.header.imageHeight);
+                    image.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < pixelRow.Length; x++)
+                            {
+                                //flip vertically while copying
+                                int index = (height - y - 1) * width + x;
+                                int palIndex = img.data[index];
+                                pixelRow[x] = palette[palIndex];// colors[index];
+                            }
+                        }
+                    });
+                    image.SaveAsPng(outputFile);
+                    /*for (int i = 0; i < colors.Length; i++)
                     {
                         colors[i] = palette[img.data[i]];
-                    }
+                    }*/
+                    return;
                     break;
                 default:
                     throw new NotImplementedException("unsupported format: " + img.header.pixelFormat);
             }
 
-            using Image<Rgba32> image = new Image<Rgba32>(width, height);
+            /*using Image<Rgba32> image = new Image<Rgba32>(width, height);
             image.ProcessPixelRows(accessor =>
             {
                 for (int y = 0; y < accessor.Height; y++)
@@ -70,7 +87,7 @@ namespace ImgToPng
                     }
                 }
             });
-            image.SaveAsPng(outputFile);
+            image.SaveAsPng(outputFile);*/
         }
     }
 }
