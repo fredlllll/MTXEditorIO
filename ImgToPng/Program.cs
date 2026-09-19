@@ -31,49 +31,32 @@ namespace ImgToPng
             switch (img.header.pixelFormat)
             {
                 case ImgPixelFormat.BGRA8888:
+                    //data is encoded as B,G,R,A bytes on disk
                     var dat = img.data;
                     for (int i = 0; i < colors.Length; i++)
                     {
                         var dataIndex = i * 4;
-                        colors[i] = new Rgba32(dat[dataIndex+2], dat[dataIndex + 1], dat[dataIndex], dat[dataIndex + 3]);
+                        colors[i] = new Rgba32(dat[dataIndex + 2], dat[dataIndex + 1], dat[dataIndex], dat[dataIndex + 3]);
                     }
                     break;
                 case ImgPixelFormat.Indexed8:
-                    var pal = img.palette;
+                    //palette entries are also encoded as B,G,R,A bytes on disk
                     Rgba32[] palette = new Rgba32[img.palette.Length];
                     for (int i = 0; i < palette.Length; i++)
                     {
                         var palColor = img.palette[i];
-
                         palette[i] = new Rgba32(palColor.b, palColor.g, palColor.r, palColor.a);
                     }
-                    Image<Rgba32> image = new Image<Rgba32>(img.header.imageWidth, img.header.imageHeight);
-                    image.ProcessPixelRows(accessor =>
-                    {
-                        for (int y = 0; y < accessor.Height; y++)
-                        {
-                            Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
-                            for (int x = 0; x < pixelRow.Length; x++)
-                            {
-                                //flip vertically while copying
-                                int index = (height - y - 1) * width + x;
-                                int palIndex = img.data[index];
-                                pixelRow[x] = palette[palIndex];// colors[index];
-                            }
-                        }
-                    });
-                    image.SaveAsPng(outputFile);
-                    /*for (int i = 0; i < colors.Length; i++)
+                    for (int i = 0; i < colors.Length; i++)
                     {
                         colors[i] = palette[img.data[i]];
-                    }*/
-                    return;
+                    }
                     break;
                 default:
                     throw new NotImplementedException("unsupported format: " + img.header.pixelFormat);
             }
 
-            /*using Image<Rgba32> image = new Image<Rgba32>(width, height);
+            using Image<Rgba32> image = new Image<Rgba32>(width, height);
             image.ProcessPixelRows(accessor =>
             {
                 for (int y = 0; y < accessor.Height; y++)
@@ -87,7 +70,7 @@ namespace ImgToPng
                     }
                 }
             });
-            image.SaveAsPng(outputFile);*/
+            image.SaveAsPng(outputFile);
         }
     }
 }
